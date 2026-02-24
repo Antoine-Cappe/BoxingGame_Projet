@@ -12,29 +12,28 @@ public class BoxerInputHandler : MonoBehaviour
     }
 
     void Update() {
-        // --- VISÉE (Gardée en continu) ---
-        float moveX = 0;
-        float moveY = 0;
-        if (Keyboard.current.leftArrowKey.isPressed) moveX = -1;
-        if (Keyboard.current.rightArrowKey.isPressed) moveX = 1;
-        if (Keyboard.current.upArrowKey.isPressed) moveY = 1;
-        if (Keyboard.current.downArrowKey.isPressed) moveY = -1;
-        
-        _mvmt.aimInput = new Vector2(moveX, moveY);
+        // --- BRAS GAUCHE (ZQSD / WASD) ---
+        float leftX = 0, leftY = 0;
+        if (Keyboard.current.aKey.isPressed) leftX = -0.5f;
+        if (Keyboard.current.dKey.isPressed) leftX = 0.5f;
+        if (Keyboard.current.wKey.isPressed) leftY = 1;
+        if (Keyboard.current.sKey.isPressed) leftY = -0.25f;
+        _mvmt.aimInputLeft = new Vector2(leftX, leftY);
 
-        // --- ESQUIVE (Impulsion) ---
-        // On détecte la pression unique sur les flèches Gauche/Droite
-        if (Keyboard.current.qKey.wasPressedThisFrame)
-        {
-            _mvmt.TriggerDodge(1f); // Penche à gauche
-        }
-        else if (Keyboard.current.eKey.wasPressedThisFrame)
-        {
-            _mvmt.TriggerDodge(-1f); // Penche à droite
-        }
+        // --- BRAS DROIT (Flèches) ---
+        float rightX = 0, rightY = 0;
+        if (Keyboard.current.leftArrowKey.isPressed) rightX = -0.5f;
+        if (Keyboard.current.rightArrowKey.isPressed) rightX = 0.5f;
+        if (Keyboard.current.upArrowKey.isPressed) rightY = 1;
+        if (Keyboard.current.downArrowKey.isPressed) rightY = -0.25f;
+        _mvmt.aimInputRight = new Vector2(rightX, rightY);
+
+        // --- ESQUIVE (Basée sur l'input du bras gauche par exemple) ---
+        if (Keyboard.current.leftShiftKey.wasPressedThisFrame) _mvmt.TriggerDodge(1f); 
+        if (Keyboard.current.rightShiftKey.wasPressedThisFrame) _mvmt.TriggerDodge(-1f);
 
         // --- COMBAT ---
-        if (Keyboard.current.aKey.wasPressedThisFrame) _combat.PunchLeft();
-        if (Keyboard.current.dKey.wasPressedThisFrame) _combat.PunchRight();
+        if (Keyboard.current.qKey.wasPressedThisFrame) _combat.PunchLeft();
+        if (Keyboard.current.eKey.wasPressedThisFrame) _combat.PunchRight(); // Changé 'D' en 'F' pour libérer les touches
     }
 }

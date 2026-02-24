@@ -7,6 +7,7 @@ public class BoxerCombat : MonoBehaviour
     [Header("Réglages de Vitesse")]
     public float punchSpeed = 15f;      // Vitesse constante (m/s)
     public float returnMultiplier = 1.2f; // Le retour est 20% plus rapide que l'aller
+    public float cooldown = 0.5f; // Délai avant de libérer l'action après le retour
 
     public bool isPunchingLeft { get; private set; }
     public bool isPunchingRight { get; private set; }
@@ -17,14 +18,14 @@ public class BoxerCombat : MonoBehaviour
     void Awake() => _mvmt = GetComponent<BoxerMovement>();
 
     public void PunchLeft() {
-        if (!isPunchingLeft && !_mvmt.isDodging) {
+        if (!isPunchingLeft && !isPunchingRight && !_mvmt.isDodging) {
             isPunchingLeft = true;
             _leftPunchCoroutine = StartCoroutine(PunchRoutine(_mvmt.leftGlove, _mvmt.GetLeftHomePos(), true));
         }
     }
 
     public void PunchRight() {
-        if (!isPunchingRight && !_mvmt.isDodging) {
+        if (!isPunchingLeft && !isPunchingRight && !_mvmt.isDodging) {
             isPunchingRight = true;
             _rightPunchCoroutine = StartCoroutine(PunchRoutine(_mvmt.rightGlove, _mvmt.GetRightHomePos(), false));
         }
@@ -60,19 +61,24 @@ public class BoxerCombat : MonoBehaviour
         float speed = punchSpeed * returnMultiplier;
 
         // RETOUR : Tant qu'on n'est pas revenu à la garde
-        while (Vector3.Distance(glove.localPosition, CalculateTargetGuard(home)) > 0.01f) {
-            Vector3 targetGuard = CalculateTargetGuard(home);
+        while (Vector3.Distance(glove.localPosition, CalculateTargetGuard(home, isLeft)) > 0.01f) {
+            Vector3 targetGuard = CalculateTargetGuard(home, isLeft);
             glove.localPosition = Vector3.MoveTowards(glove.localPosition, targetGuard, speed * Time.deltaTime);
             yield return null;
         }
 
-        // Fin du coup : On libère l'action immédiatement
+        // Fin du coup : On libère l'action après un cooldown
+        yield return new WaitForSeconds(cooldown);
         if (isLeft) isPunchingLeft = false; else isPunchingRight = false;
     }
 
     // Calcul dynamique de la position de garde (inclut la visée)
-    private Vector3 CalculateTargetGuard(Vector3 home) {
-        return home + new Vector3(_mvmt.aimInput.x * _mvmt.aimRange.x, _mvmt.aimInput.y * _mvmt.aimRange.y, 0);
+    private Vector3 CalculateTargetGuard(Vector3 home, bool isLeft) 
+    {
+        // On récupère l'input spécifique au bras
+        Vector2 specificInput = isLeft ? _mvmt.aimInputLeft : _mvmt.aimInputRight;
+        
+        return home + new Vector3(specificInput.x * _mvmt.aimRange.x, specificInput.y * _mvmt.aimRange.y, 0);
     }
 
     IEnumerator ImpactSequence(bool isLeft, bool wasBlocked, BoxerCombat opponent) {
@@ -82,7 +88,6 @@ public class BoxerCombat : MonoBehaviour
 
             // On cherche le script Visuals de l'ADVERSAIRE
             BoxerVisuals opponentVisuals = opponent.GetComponent<BoxerVisuals>();
-            // Debug.Log("Impact réussi sur " + opponent.gameObject.name + ". Tentative de récupérer BoxerVisuals : " + (opponentVisuals != null ? "Trouvé" : "Introuvable"));
             if (opponentVisuals != null) {
                 Vector3 punchDir = (opponent.transform.position - transform.position).normalized;
                 opponentVisuals.GetHit(punchDir); // Déclenche le Wobble chez l'autre

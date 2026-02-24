@@ -35,6 +35,9 @@ public class BoxerVisuals : MonoBehaviour
         _wobbleCoroutine = StartCoroutine(WobbleRoutine(axis));
     }
 
+    // Propriété pour savoir si le Wobble est en cours
+    public bool IsWobbling => _wobbleCoroutine != null;
+
     IEnumerator WobbleRoutine(Vector3 axis) {
         Quaternion target = Quaternion.AngleAxis(wobbleIntensity, axis);
         float t = 0;

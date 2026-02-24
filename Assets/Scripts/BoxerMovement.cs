@@ -8,6 +8,7 @@ public class BoxerMovement : MonoBehaviour
     public Transform leftGlove, rightGlove;
 
     [Header("Réglages Visée")]
+    public Vector2 aimInput; 
     public Vector2 aimRange = new Vector2(0.6f, 0.4f);
     public float aimSmoothSpeed = 10f;
 
@@ -17,18 +18,22 @@ public class BoxerMovement : MonoBehaviour
     public float dodgeDuration = 0.3f;   // Temps passé en position penchée
     public float dodgeCooldown = 0.8f;   // Temps avant la prochaine esquive possible
 
-    public Vector2 aimInput; 
+    // --- NOUVEAUX INPUTS INDÉPENDANTS ---
+    [HideInInspector] public Vector2 aimInputLeft;
+    [HideInInspector] public Vector2 aimInputRight;
+    
     public bool isDodging { get; private set; }
     private bool _canDodge = true;
-    
     private Vector3 _leftHomePos, _rightHomePos;
     private BoxerCombat _combat;
+    private BoxerVisuals _visuals;
 
     void Awake()
     {
         _leftHomePos = leftGlove.localPosition;
         _rightHomePos = rightGlove.localPosition;
         _combat = GetComponent<BoxerCombat>();
+        _visuals = GetComponent<BoxerVisuals>();
     }
 
     void Update()
@@ -89,14 +94,15 @@ public class BoxerMovement : MonoBehaviour
 
     private void HandleGuardMovement()
     {
-        // La garde suit l'aimInput, mais on peut ajouter un décalage si on veut qu'elle bouge pendant l'esquive
-        Vector3 offset = new Vector3(aimInput.x * aimRange.x, aimInput.y * aimRange.y, 0);
-
+        // Calcul du décalage pour le gant GAUCHE
+        Vector3 offsetLeft = new Vector3(aimInputLeft.x * aimRange.x, aimInputLeft.y * aimRange.y, 0);
         if (!_combat.isPunchingLeft)
-            leftGlove.localPosition = Vector3.Lerp(leftGlove.localPosition, _leftHomePos + offset, Time.deltaTime * aimSmoothSpeed);
-        
+            leftGlove.localPosition = Vector3.Lerp(leftGlove.localPosition, _leftHomePos + offsetLeft, Time.deltaTime * aimSmoothSpeed);
+
+        // Calcul du décalage pour le gant DROIT
+        Vector3 offsetRight = new Vector3(aimInputRight.x * aimRange.x, aimInputRight.y * aimRange.y, 0);
         if (!_combat.isPunchingRight)
-            rightGlove.localPosition = Vector3.Lerp(rightGlove.localPosition, _rightHomePos + offset, Time.deltaTime * aimSmoothSpeed);
+            rightGlove.localPosition = Vector3.Lerp(rightGlove.localPosition, _rightHomePos + offsetRight, Time.deltaTime * aimSmoothSpeed);
     }
 
     public Vector3 GetLeftHomePos() => _leftHomePos;

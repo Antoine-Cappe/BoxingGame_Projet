@@ -12,8 +12,11 @@ public class BoxerHealth : MonoBehaviour
     [Header("Références")]
     public Transform pivot; 
 
+    private CapsuleCollider _mainCollider;
+
     void Awake() {
         _currentHits = 0;
+        _mainCollider = GetComponent<CapsuleCollider>(); // On récupère la capsule
     }
 
     // On ajoute le paramètre hitDirection ici
@@ -43,6 +46,14 @@ public class BoxerHealth : MonoBehaviour
         if (mvmt != null) { mvmt.StopAllCoroutines(); mvmt.enabled = false; }
         if (combat != null) { combat.StopAllCoroutines(); combat.enabled = false; }
         if (visuals != null) { visuals.StopAllCoroutines(); visuals.enabled = false; }
+
+        if (_mainCollider != null) {
+            // Option A : Désactivation totale (Attention à la chute à travers le sol !)
+            _mainCollider.enabled = false; 
+            
+            // Option B (Recommandée) : Changer le Layer pour "Ignore Raycast" ou un layer mort
+            // gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+        }
         
         // On passe la direction à la routine de chute
         StartCoroutine(FallRoutine(_lastHitDirection));
@@ -64,7 +75,7 @@ public class BoxerHealth : MonoBehaviour
         
         // 3. Calculer la rotation cible (85 degrés sur l'axe de chute)
         // On ajoute un petit décalage aléatoire pour éviter les chutes trop robotiques
-        float randomTwist = Random.Range(-10f, 10f);
+        float randomTwist = Random.Range(-45f, 45f);
         Quaternion endRot = Quaternion.AngleAxis(85f, fallAxis) * Quaternion.Euler(0, randomTwist, 0);
         
         float t = 0;
@@ -76,7 +87,6 @@ public class BoxerHealth : MonoBehaviour
         }
         
         pivot.localRotation = endRot;
-        Debug.Log("K.O. - Agent au sol dans la direction opposée à l'impact.");
     }
 
     // Méthode utile pour ML-Agents ou UI

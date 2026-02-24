@@ -4,67 +4,81 @@ using System.Collections;
 public class BoxerHealth : MonoBehaviour
 {
     [Header("Réglages Santé")]
-    public int maxHits = 5; 
+    public int maxHits = 10; 
     private int _currentHits;
     private bool _isKO = false;
+    private Vector3 _lastHitDirection; // Stocke la direction du dernier impact
 
     [Header("Références")]
-    private BoxerController _controller;
     public Transform pivot; 
 
-    void Awake()
-    {
-        _currentHits = maxHits;
-        _controller = GetComponent<BoxerController>();
+    void Awake() {
+        _currentHits = 0;
     }
 
-    public void TakeDamage()
+    // On ajoute le paramètre hitDirection ici
+    public void TakeDamage(Vector3 hitDirection)
     {
         if (_isKO) return;
 
-        _currentHits--;
-        if (_currentHits <= 0)
+        _lastHitDirection = hitDirection;
+        _currentHits++;
+
+        if (_currentHits >= maxHits)
         {
             TriggerKO();
         }
     }
 
-    private void TriggerKO()
-    {
-        if (_isKO) return;
+    private void TriggerKO() {
+        if (_isKO) return; // Sécurité pour ne pas déclencher deux fois
         _isKO = true;
 
-        // Désactivation du controller et arrêt des routines de punch/wobble
-        if (_controller != null)
-        {
-            _controller.StopAllCoroutines(); 
-            _controller.enabled = false;
-        }
+        // 1. On récupère TOUS les scripts de logique
+        BoxerMovement mvmt = GetComponent<BoxerMovement>();
+        BoxerCombat combat = GetComponent<BoxerCombat>();
+        BoxerVisuals visuals = GetComponent<BoxerVisuals>();
 
-        // On lance la chute finale
-        StartCoroutine(FallRoutine());
+        // 2. On les stoppe et on les désactive FERMEMENT
+        if (mvmt != null) { mvmt.StopAllCoroutines(); mvmt.enabled = false; }
+        if (combat != null) { combat.StopAllCoroutines(); combat.enabled = false; }
+        if (visuals != null) { visuals.StopAllCoroutines(); visuals.enabled = false; }
+        
+        // On passe la direction à la routine de chute
+        StartCoroutine(FallRoutine(_lastHitDirection));
     }
 
-    IEnumerator FallRoutine()
+    IEnumerator FallRoutine(Vector3 worldHitDir)
     {
-        // On s'assure que rien d'autre ne touche au pivot
+        // 1. Convertir la direction mondiale du coup en direction LOCALE
+        // Indispensable si l'agent est tourné (ex: face à l'autre joueur)
+        Vector3 localHitDir = transform.InverseTransformDirection(worldHitDir);
+        localHitDir.y = 0; // On reste sur le plan horizontal pour l'axe de chute
+        localHitDir.Normalize();
+
+        // 2. Calculer l'axe de basculement (perpendiculaire à l'impact)
+        // Si le coup vient de devant, l'axe sera "droite/gauche" (X local)
+        Vector3 fallAxis = Vector3.Cross(Vector3.up, localHitDir);
+
         Quaternion startRot = pivot.localRotation;
         
-        // On peut varier la chute : un peu sur le côté et vers l'arrière
-        Quaternion endRot = Quaternion.Euler(85, 15, 0); 
+        // 3. Calculer la rotation cible (85 degrés sur l'axe de chute)
+        // On ajoute un petit décalage aléatoire pour éviter les chutes trop robotiques
+        float randomTwist = Random.Range(-10f, 10f);
+        Quaternion endRot = Quaternion.AngleAxis(85f, fallAxis) * Quaternion.Euler(0, randomTwist, 0);
         
         float t = 0;
         while (t < 1f)
         {
-            // On utilise deltaTime pour une chute fluide
             t += Time.deltaTime * 2.5f; 
-            
-            // Utilisation de Slerp pour une rotation de chute naturelle
             pivot.localRotation = Quaternion.Slerp(startRot, endRot, t);
             yield return null;
         }
         
-        // On force la position finale pour être sûr qu'il ne bouge plus
         pivot.localRotation = endRot;
+        Debug.Log("K.O. - Agent au sol dans la direction opposée à l'impact.");
     }
+
+    // Méthode utile pour ML-Agents ou UI
+    public bool IsKO() => _isKO;
 }

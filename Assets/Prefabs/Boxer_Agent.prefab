@@ -158,8 +158,11 @@ GameObject:
   - component: {fileID: 7441529944678704162}
   - component: {fileID: 3401557476214031267}
   - component: {fileID: 6251073128632929194}
-  - component: {fileID: 1769399860835791269}
+  - component: {fileID: 4501114333416021762}
+  - component: {fileID: 3336267053872079487}
+  - component: {fileID: 1284981116672497541}
   - component: {fileID: 5540551961168976133}
+  - component: {fileID: 7757721719564103990}
   m_Layer: 0
   m_Name: Boxer_Agent
   m_TagString: Player
@@ -233,7 +236,7 @@ CapsuleCollider:
   m_Height: 2.8
   m_Direction: 1
   m_Center: {x: 0, y: 0.5, z: 0}
---- !u!114 &1769399860835791269
+--- !u!114 &4501114333416021762
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -242,20 +245,47 @@ MonoBehaviour:
   m_GameObject: {fileID: 3741021577558099081}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb043a1d724a4f2458bdd6d748a84a65, type: 3}
+  m_Script: {fileID: 11500000, guid: 3c45073d377f85b488da5ee50b9971f9, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BoxerController
+  m_EditorClassIdentifier: Assembly-CSharp::BoxerMovement
+  pivot: {fileID: 7559796856055786638}
   leftGlove: {fileID: 6619878534616188632}
   rightGlove: {fileID: 6132060569301164706}
-  pivot: {fileID: 7559796856055786638}
-  punchSpeed: 5
-  punchDistance: 1.5
-  returnMultiplier: 1.5
-  aimInput: {x: 0, y: 0}
-  aimRange: {x: 0.6, y: 1}
+  aimRange: {x: 0.6, y: 0.4}
   aimSmoothSpeed: 10
   dodgeAngle: 35
-  dodgeSmoothSpeed: 12
+  dodgeSpeed: 10
+  dodgeDuration: 0.3
+  dodgeCooldown: 0
+  aimInput: {x: 0, y: 0}
+--- !u!114 &3336267053872079487
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3741021577558099081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe4572dcefdbd9045b3ef607eeb0ff03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BoxerCombat
+  punchSpeed: 10
+  returnMultiplier: 1
+  punchDistance: 1.8
+--- !u!114 &1284981116672497541
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3741021577558099081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5532ece109ed474b9c525eab757a035, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BoxerVisuals
+  pivot: {fileID: 7559796856055786638}
   wobbleIntensity: 30
   recoverSpeed: 5
 --- !u!114 &5540551961168976133
@@ -272,6 +302,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BoxerHealth
   maxHits: 10
   pivot: {fileID: 7559796856055786638}
+--- !u!114 &7757721719564103990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3741021577558099081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 250f87e9264613f41a7085dacab34b4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BoxerInputHandler
 --- !u!1 &4589303783991055957
 GameObject:
   m_ObjectHideFlags: 0
@@ -285,6 +327,7 @@ GameObject:
   - component: {fileID: 7218388171085719895}
   - component: {fileID: 7358710855153123537}
   - component: {fileID: 6698792623728711230}
+  - component: {fileID: 8845264645220459667}
   m_Layer: 0
   m_Name: Gant_Gauche
   m_TagString: Glove
@@ -397,8 +440,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d1ea48457078b84ca37f665d58b43ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PunchDetector
-  owner: {fileID: 1769399860835791269}
+  owner: {fileID: 3336267053872079487}
   isLeftGlove: 1
+--- !u!54 &8845264645220459667
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4589303783991055957}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &6124122234805510911
 GameObject:
   m_ObjectHideFlags: 0
@@ -412,6 +482,7 @@ GameObject:
   - component: {fileID: 7147320058585430607}
   - component: {fileID: 7943496738691645652}
   - component: {fileID: 7524676884748602050}
+  - component: {fileID: 1074583645250936307}
   m_Layer: 0
   m_Name: Gant_Droit
   m_TagString: Glove
@@ -524,8 +595,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d1ea48457078b84ca37f665d58b43ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PunchDetector
-  owner: {fileID: 1769399860835791269}
+  owner: {fileID: 3336267053872079487}
   isLeftGlove: 0
+--- !u!54 &1074583645250936307
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6124122234805510911}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &6986484604687610599
 GameObject:
   m_ObjectHideFlags: 0

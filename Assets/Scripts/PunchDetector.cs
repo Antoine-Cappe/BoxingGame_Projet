@@ -18,6 +18,12 @@ public class PunchDetector : MonoBehaviour
             if (!other.transform.IsChildOf(owner.transform)) {
                 // On cherche BoxerCombat sur l'adversaire
                 BoxerCombat adversaire = other.GetComponentInParent<BoxerCombat>();
+
+                // Dans PunchDetector.cs, là où le coup est réussi :
+                BoxerAgent myAgent = owner.GetComponent<BoxerAgent>();
+                if (myAgent != null) {
+                    myAgent.AddReward(0.1f); // Récompense pour avoir touché
+                }
                 
                 if (adversaire != null)
                 {

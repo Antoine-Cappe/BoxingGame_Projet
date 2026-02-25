@@ -17,11 +17,8 @@ public class BoxerVisuals : MonoBehaviour
     }
 
     public void GetHit(Vector3 direction) {
-        // Debug pour vérifier que la fonction est bien reçue
-        // Debug.Log(gameObject.name + " a reçu un message d'impact !");
 
         if (_mvmt != null && _mvmt.isDodging) {
-            Debug.Log("Coup ignoré : " + gameObject.name + " est en train d'esquiver.");
             return;
         }
 

@@ -102,4 +102,17 @@ public class BoxerCombat : MonoBehaviour
 
     // Ajoute cette variable si elle manquait
     public float punchDistance = 1.8f;
+
+    public void ResetCombatState()
+    {
+        // On arrête les coups en cours
+        StopAllCoroutines();
+        
+        // On force les booléens à faux
+        isPunchingLeft = false;
+        isPunchingRight = false;
+        
+        // Si tu as des paramètres d'animator à reset, fais-le ici aussi
+        // ex: _anim.Play("Idle");
+    }
 }   

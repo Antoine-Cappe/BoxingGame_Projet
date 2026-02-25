@@ -8,26 +8,36 @@ public class PunchDetector : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        // 1. Détection du BLOCAGE (Gant contre Gant)
         if (other.CompareTag("Glove") && !other.transform.IsChildOf(owner.transform)) {
             owner.HandleImpact(isLeftGlove, true, null);
             return;
         }
-        // 2. Détection du COUP RÉUSSI (Corps)
+
+        // 2. Détection du COUP RÉUSSI (Corps de l'adversaire)
         if (other.CompareTag("Opponent") || other.CompareTag("Player"))
         {
-            if (!other.transform.IsChildOf(owner.transform)) {
-                // On cherche BoxerCombat sur l'adversaire
-                BoxerCombat adversaire = other.GetComponentInParent<BoxerCombat>();
-
-                // Dans PunchDetector.cs, là où le coup est réussi :
+            if (!other.transform.IsChildOf(owner.transform)) 
+            {
+                // --- RÉCOMPENSE POUR CELUI QUI FRAPPE ---
                 BoxerAgent myAgent = owner.GetComponent<BoxerAgent>();
                 if (myAgent != null) {
-                    myAgent.AddReward(0.1f); // Récompense pour avoir touché
+                    myAgent.AddReward(0.1f); 
+                }
+
+                // --- PUNITION POUR CELUI QUI REÇOIT ---
+                // On cherche BoxerCombat ET BoxerAgent sur l'adversaire
+                BoxerCombat adversaireCombat = other.GetComponentInParent<BoxerCombat>();
+                BoxerAgent adversaireAgent = other.GetComponentInParent<BoxerAgent>();
+
+                if (adversaireAgent != null)
+                {
+                    adversaireAgent.AddReward(-0.1f); // Punition pour avoir encaissé
                 }
                 
-                if (adversaire != null)
+                if (adversaireCombat != null)
                 {
-                    owner.HandleImpact(isLeftGlove, false, adversaire);
+                    owner.HandleImpact(isLeftGlove, false, adversaireCombat);
                 }
             }
         }

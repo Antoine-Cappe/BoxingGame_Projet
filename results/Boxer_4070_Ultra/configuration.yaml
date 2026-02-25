@@ -72,7 +72,7 @@ engine_settings:
   no_graphics_monitor: false
 environment_parameters: null
 checkpoint_settings:
-  run_id: ppo
+  run_id: Boxer_4070_Ultra
   initialize_from: null
   load_model: false
   resume: false

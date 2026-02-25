@@ -766,7 +766,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 50000
+  MaxStep: 10000
   opponent: {fileID: 7224256834248838908, guid: 2a244aaa49edd8f4c9577c1ba08832e1, type: 3}
   spawnPoint: {fileID: 0}
 --- !u!114 &8172575602913644935

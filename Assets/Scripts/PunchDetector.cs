@@ -25,16 +25,7 @@ public class PunchDetector : MonoBehaviour
                     myAgent.AddReward(0.1f); 
                 }
 
-                // --- PUNITION POUR CELUI QUI REÇOIT ---
-                // On cherche BoxerCombat ET BoxerAgent sur l'adversaire
                 BoxerCombat adversaireCombat = other.GetComponentInParent<BoxerCombat>();
-                BoxerAgent adversaireAgent = other.GetComponentInParent<BoxerAgent>();
-
-                if (adversaireAgent != null)
-                {
-                    adversaireAgent.AddReward(-0.1f); // Punition pour avoir encaissé
-                }
-                
                 if (adversaireCombat != null)
                 {
                     owner.HandleImpact(isLeftGlove, false, adversaireCombat);

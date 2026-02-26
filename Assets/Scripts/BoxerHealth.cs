@@ -6,7 +6,7 @@ public class BoxerHealth : MonoBehaviour
     [Header("Réglages Santé")]
     public int maxHits = 10; 
     private int _currentHits;
-    public bool _isKO = false;
+    private bool _isKO = false;
     private Vector3 _lastHitDirection; // Stocke la direction du dernier impact
 
     [Header("Références")]
@@ -19,13 +19,20 @@ public class BoxerHealth : MonoBehaviour
         _mainCollider = GetComponent<CapsuleCollider>(); // On récupère la capsule
     }
 
-    // On ajoute le paramètre hitDirection ici
     public void TakeDamage(Vector3 hitDirection)
     {
         if (_isKO) return;
 
         _lastHitDirection = hitDirection;
         _currentHits++;
+
+        // --- AJOUT DE LA PUNITION ---
+        BoxerAgent agent = GetComponent<BoxerAgent>();
+        if (agent != null) 
+        {
+            agent.AddReward(-0.1f); 
+        }
+        // ----------------------------
 
         if (_currentHits >= maxHits)
         {
@@ -50,16 +57,10 @@ public class BoxerHealth : MonoBehaviour
         if (_mainCollider != null) {
             // Option A : Désactivation totale (Attention à la chute à travers le sol !)
             _mainCollider.enabled = false; 
-            
-            // Option B (Recommandée) : Changer le Layer pour "Ignore Raycast" ou un layer mort
-            // gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
         }
         
-        // On passe la direction à la routine de chute
         StartCoroutine(FallRoutine(_lastHitDirection));
-        // délai d'une seconde
         
-
         BoxerAgent myAgent = GetComponent<BoxerAgent>();
         if (myAgent != null) {
             myAgent.AgentKO();

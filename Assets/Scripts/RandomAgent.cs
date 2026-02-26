@@ -13,20 +13,18 @@ public class RandomAgent : MonoBehaviour
     {
         _actionTimer += Time.deltaTime;
 
-        // 1. On change la visée UNE SEULE FOIS à la moitié du cycle (0.5s)
         if (_actionTimer >= 0.5f && !_inputTriggered) 
         {
             TakeRandomInput();
             _inputTriggered = true; // On verrouille
         }
 
-        // 2. On déclenche l'action et on reset à 1.0s
         if (_actionTimer >= 1f) 
         {
             _actionTimer = 0f;
             _inputTriggered = false; // On déverrouille pour le prochain cycle
 
-            if (Random.value < 0.5f)
+            if (Random.value < 0.7f)
             {
                 TakeRandomAction(); 
             }

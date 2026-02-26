@@ -176,17 +176,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8981819406923762057, guid: 2808f871ffd336644a1cf14b752453f8, type: 3}
   m_PrefabInstance: {fileID: 7634321050972283268}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5499990866072286292 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2711565004663739856, guid: 2808f871ffd336644a1cf14b752453f8, type: 3}
+--- !u!1 &3919931828806448780 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6887388901094987528, guid: 2808f871ffd336644a1cf14b752453f8, type: 3}
   m_PrefabInstance: {fileID: 7634321050972283268}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 52038f7ad624e8d45b841702cee61656, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BoxerAgent
 --- !u!1001 &8118906343246636154
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -204,13 +198,21 @@ PrefabInstance:
       value: Boxer_Agent
       objectReference: {fileID: 0}
     - target: {fileID: 7224256834248838908, guid: 2a244aaa49edd8f4c9577c1ba08832e1, type: 3}
+      propertyPath: mySpawn
+      value: 
+      objectReference: {fileID: 8949663907607497687}
+    - target: {fileID: 7224256834248838908, guid: 2a244aaa49edd8f4c9577c1ba08832e1, type: 3}
       propertyPath: opponent
       value: 
-      objectReference: {fileID: 5499990866072286292}
+      objectReference: {fileID: 3919931828806448780}
     - target: {fileID: 7224256834248838908, guid: 2a244aaa49edd8f4c9577c1ba08832e1, type: 3}
       propertyPath: spawnPoint
       value: 
       objectReference: {fileID: 8949663907607497687}
+    - target: {fileID: 7224256834248838908, guid: 2a244aaa49edd8f4c9577c1ba08832e1, type: 3}
+      propertyPath: opponentSpawn
+      value: 
+      objectReference: {fileID: 5558964465142450234}
     - target: {fileID: 7441529944678704162, guid: 2a244aaa49edd8f4c9577c1ba08832e1, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

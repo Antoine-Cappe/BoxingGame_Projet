@@ -6,7 +6,7 @@ public class BoxerHealth : MonoBehaviour
     [Header("Réglages Santé")]
     public int maxHits = 10; 
     private int _currentHits;
-    private bool _isKO = false;
+    public bool _isKO = false;
     private Vector3 _lastHitDirection; // Stocke la direction du dernier impact
 
     [Header("Références")]

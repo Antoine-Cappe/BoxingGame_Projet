@@ -307,6 +307,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoxerHealth
   maxHits: 10
+  _isKO: 0
   pivot: {fileID: 7559796856055786638}
 --- !u!114 &7757721719564103990
 MonoBehaviour:
@@ -366,9 +367,10 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 10000
-  opponent: {fileID: 2711565004663739856, guid: 2808f871ffd336644a1cf14b752453f8, type: 3}
-  spawnPoint: {fileID: 0}
+  MaxStep: 0
+  opponent: {fileID: 6887388901094987528, guid: 2808f871ffd336644a1cf14b752453f8, type: 3}
+  mySpawn: {fileID: 0}
+  opponentSpawn: {fileID: 0}
 --- !u!114 &879595198445577221
 MonoBehaviour:
   m_ObjectHideFlags: 0

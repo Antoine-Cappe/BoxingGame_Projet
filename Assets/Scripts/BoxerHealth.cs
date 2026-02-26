@@ -1,22 +1,27 @@
 using UnityEngine;
-using System.Collections;
 
 public class BoxerHealth : MonoBehaviour
 {
     [Header("Réglages Santé")]
-    public int maxHits = 10; 
+    public int maxHits = 10;
     private int _currentHits;
     private bool _isKO = false;
-    private Vector3 _lastHitDirection; // Stocke la direction du dernier impact
+    private Vector3 _lastHitDirection;
 
-    [Header("Références")]
-    public Transform pivot; 
-
+    [Header("Physique du KO")]
+    public GameObject ragdollPrefab; // Ton prefab de capsule physique
+    public float knockbackForce = 15f; // Force de recul
+    public float liftForce = 5f;      // Force vers le haut pour l'effet "volant"
+    
+    private GameObject _spawnedRagdoll;
     private CapsuleCollider _mainCollider;
+    
+    [Header("Références")]
+    public GameObject visualsRoot; // L'objet parent de tout ton visuel (Mesh, gants, etc.)
 
     void Awake() {
+        _mainCollider = GetComponent<CapsuleCollider>();
         _currentHits = 0;
-        _mainCollider = GetComponent<CapsuleCollider>(); // On récupère la capsule
     }
 
     public void TakeDamage(Vector3 hitDirection)
@@ -26,90 +31,88 @@ public class BoxerHealth : MonoBehaviour
         _lastHitDirection = hitDirection;
         _currentHits++;
 
-        // --- AJOUT DE LA PUNITION ---
+        // Récompense négative pour l'IA (instinct de survie)
         BoxerAgent agent = GetComponent<BoxerAgent>();
-        if (agent != null) 
-        {
+        if (agent != null) {
             agent.AddReward(-0.1f); 
         }
-        // ----------------------------
 
-        if (_currentHits >= maxHits)
-        {
+        if (_currentHits >= maxHits) {
             TriggerKO();
+        } else {
+            // Si pas KO, on déclenche juste le tremblement visuel
+            BoxerVisuals visuals = GetComponent<BoxerVisuals>();
+            if (visuals != null && visuals.enabled) {
+                visuals.TriggerWobble(hitDirection);
+            }
         }
     }
 
     private void TriggerKO() {
-        if (_isKO) return; // Sécurité pour ne pas déclencher deux fois
+        if (_isKO) return;
         _isKO = true;
 
-        // 1. On récupère TOUS les scripts de logique
+        // 1. Désactivation de la logique et du visuel
+        if (_mainCollider != null) _mainCollider.enabled = false;
+        if (visualsRoot != null) visualsRoot.SetActive(false);
+        
+        // On stoppe les mouvements et le combat
         BoxerMovement mvmt = GetComponent<BoxerMovement>();
         BoxerCombat combat = GetComponent<BoxerCombat>();
-        BoxerVisuals visuals = GetComponent<BoxerVisuals>();
+        if (mvmt != null) mvmt.enabled = false;
+        if (combat != null) combat.enabled = false;
 
-        // 2. On les stoppe et on les désactive FERMEMENT
-        if (mvmt != null) { mvmt.StopAllCoroutines(); mvmt.enabled = false; }
-        if (combat != null) { combat.StopAllCoroutines(); combat.enabled = false; }
-        if (visuals != null) { visuals.StopAllCoroutines(); visuals.enabled = false; }
+        // 2. Apparition du corps physique (Ragdoll)
+        if (ragdollPrefab != null) {
+            _spawnedRagdoll = Instantiate(ragdollPrefab, transform.position, transform.rotation);
+            Rigidbody rb = _spawnedRagdoll.GetComponent<Rigidbody>();
+            
+            if (rb != null) {
+                // --- OPTIMISATION DE L'IMPACT ---
+                
+                // On applique la force un peu plus haut que le centre (ex: à 0.8 unité de haut)
+                // Cela crée un "levier" qui fait basculer la capsule instantanément.
+                Vector3 impactPoint = _spawnedRagdoll.transform.position + Vector3.up * 0.8f;
+                
+                // Force de recul (direction du coup + un peu de hauteur)
+                Vector3 force = _lastHitDirection.normalized * knockbackForce + Vector3.up * liftForce;
+                
+                // On utilise AddForceAtPosition pour créer le basculement naturel
+                rb.AddForceAtPosition(force, impactPoint, ForceMode.Impulse);
 
-        if (_mainCollider != null) {
-            // Option A : Désactivation totale (Attention à la chute à travers le sol !)
-            _mainCollider.enabled = false; 
+                // Au lieu d'un torque aléatoire, on force une rotation "en arrière" 
+                // par rapport à la direction du coup (Backflip)
+                Vector3 torqueAxis = Vector3.Cross(Vector3.up, _lastHitDirection).normalized;
+                rb.AddTorque(torqueAxis * (knockbackForce * 0.5f), ForceMode.Impulse);
+            }
         }
-        
-        StartCoroutine(FallRoutine(_lastHitDirection));
-        
+
+        // 3. Alerte l'Agent pour finir l'épisode (avec le délai qu'on va coder dans BoxerAgent)
         BoxerAgent myAgent = GetComponent<BoxerAgent>();
         if (myAgent != null) {
             myAgent.AgentKO();
         }
     }
 
-    IEnumerator FallRoutine(Vector3 worldHitDir)
-    {
-        // 1. Convertir la direction mondiale du coup en direction LOCALE
-        // Indispensable si l'agent est tourné (ex: face à l'autre joueur)
-        Vector3 localHitDir = transform.InverseTransformDirection(worldHitDir);
-        localHitDir.y = 0; // On reste sur le plan horizontal pour l'axe de chute
-        localHitDir.Normalize();
-
-        // 2. Calculer l'axe de basculement (perpendiculaire à l'impact)
-        // Si le coup vient de devant, l'axe sera "droite/gauche" (X local)
-        Vector3 fallAxis = Vector3.Cross(Vector3.up, localHitDir);
-
-        Quaternion startRot = pivot.localRotation;
-        
-        // 3. Calculer la rotation cible (85 degrés sur l'axe de chute)
-        // On ajoute un petit décalage aléatoire pour éviter les chutes trop robotiques
-        float randomTwist = Random.Range(-45f, 45f);
-        Quaternion endRot = Quaternion.AngleAxis(85f, fallAxis) * Quaternion.Euler(0, randomTwist, 0);
-        
-        float t = 0;
-        while (t < 1f)
-        {
-            t += Time.deltaTime * 2.5f; 
-            pivot.localRotation = Quaternion.Slerp(startRot, endRot, t);
-            yield return null;
-        }
-        
-        pivot.localRotation = endRot;
-    }
-
     public void ResetHealth()
     {
+        // Nettoyage du round précédent
         _isKO = false;
         _currentHits = 0;
-        
-        // RE-ACTIVER le collider !
-        if (_mainCollider != null) {
-            _mainCollider.enabled = true; 
+
+        if (_spawnedRagdoll != null) {
+            Destroy(_spawnedRagdoll);
         }
+
+        // Réactivation du boxeur
+        if (_mainCollider != null) _mainCollider.enabled = true;
+        if (visualsRoot != null) visualsRoot.SetActive(true);
         
-        // Remettre le tag si tu l'as changé
-        gameObject.tag = "Player"; 
+        BoxerMovement mvmt = GetComponent<BoxerMovement>();
+        BoxerCombat combat = GetComponent<BoxerCombat>();
+        if (mvmt != null) mvmt.enabled = true;
+        if (combat != null) combat.enabled = true;
     }
-    // Méthode utile pour ML-Agents ou UI
-    public bool IsKO() => _isKO;
+
+    public bool IsKO => _isKO;
 }

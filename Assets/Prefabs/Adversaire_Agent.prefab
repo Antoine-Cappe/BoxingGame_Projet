@@ -704,7 +704,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoxerHealth
   maxHits: 10
-  pivot: {fileID: 7247660232703713700}
+  ragdollPrefab: {fileID: 3741021577558099081, guid: ba8864310250deb449ca5fec658ae55d, type: 3}
+  knockbackForce: 20
+  liftForce: 5
+  visualsRoot: {fileID: 5290987861361740881}
 --- !u!114 &3475361815677770082
 MonoBehaviour:
   m_ObjectHideFlags: 0

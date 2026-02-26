@@ -3,56 +3,59 @@ using System.Collections;
 
 public class BoxerVisuals : MonoBehaviour
 {
+    [Header("Réglages du Tremblement")]
     public Transform pivot;
     public float wobbleIntensity = 30f;
     public float recoverSpeed = 5f;
 
     private Coroutine _wobbleCoroutine;
     private BoxerMovement _mvmt;
-    private BoxerHealth _health;
 
     void Awake() {
         _mvmt = GetComponent<BoxerMovement>();
-        _health = GetComponent<BoxerHealth>();
     }
 
-    public void GetHit(Vector3 direction) {
-
+    // Renommé pour correspondre à l'appel dans BoxerHealth
+    public void TriggerWobble(Vector3 direction) {
+        
+        // Si on est en train d'esquiver, on ignore l'effet visuel du choc
         if (_mvmt != null && _mvmt.isDodging) {
             return;
         }
 
-        if (_health != null) _health.TakeDamage(direction);
-
         Vector3 localDir = transform.InverseTransformDirection(direction);
-        // On s'assure que l'axe n'est pas (0,0,0)
+        // On calcule l'axe de rotation perpendiculaire à l'impact
         Vector3 axis = Vector3.Cross(Vector3.up, localDir.normalized);
 
+        // Si un tremblement est déjà en cours, on l'arrête pour recommencer le nouveau
         if (_wobbleCoroutine != null) StopCoroutine(_wobbleCoroutine);
         _wobbleCoroutine = StartCoroutine(WobbleRoutine(axis));
     }
 
-    // Propriété pour savoir si le Wobble est en cours
-    public bool IsWobbling => _wobbleCoroutine != null;
-
     IEnumerator WobbleRoutine(Vector3 axis) {
         Quaternion target = Quaternion.AngleAxis(wobbleIntensity, axis);
         float t = 0;
+
+        // 1. PHASE D'IMPACT : On penche brusquement le pivot
         while (t < 1) {
-            t += Time.deltaTime * 20f;
+            t += Time.deltaTime * 20f; // Vitesse d'impact très rapide
             pivot.localRotation = Quaternion.Lerp(pivot.localRotation, target, t);
             yield return null;
         }
-        while (Quaternion.Angle(pivot.localRotation, Quaternion.identity) > 0.1f)
-    {
-        // AJOUT : Si le script est désactivé (KO), on arrête tout de suite !
-        if (!this.enabled) yield break; 
 
-        pivot.localRotation = Quaternion.Lerp(pivot.localRotation, Quaternion.identity, Time.deltaTime * recoverSpeed);
-        yield return null;
-    }
-    
-    if (this.enabled) pivot.localRotation = Quaternion.identity;
-    _wobbleCoroutine = null;
+        // 2. PHASE DE RÉCUPÉRATION : On revient à la position droite
+        while (Quaternion.Angle(pivot.localRotation, Quaternion.identity) > 0.1f)
+        {
+            // SÉCURITÉ : Si le boxeur est mis KO pendant le tremblement, on arrête tout !
+            // (Le script sera désactivé par BoxerHealth)
+            if (!this.enabled) yield break; 
+
+            pivot.localRotation = Quaternion.Lerp(pivot.localRotation, Quaternion.identity, Time.deltaTime * recoverSpeed);
+            yield return null;
+        }
+        
+        // On s'assure d'être parfaitement droit à la fin
+        if (this.enabled) pivot.localRotation = Quaternion.identity;
+        _wobbleCoroutine = null;
     }
 }

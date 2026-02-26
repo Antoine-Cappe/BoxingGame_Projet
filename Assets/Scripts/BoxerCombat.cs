@@ -1,13 +1,13 @@
 using UnityEngine;
 using System.Collections;
-using System.Runtime.InteropServices;
 
 public class BoxerCombat : MonoBehaviour
 {
     [Header("Réglages de Vitesse")]
-    public float punchSpeed = 15f;      // Vitesse constante (m/s)
-    public float returnMultiplier = 1.2f; // Le retour est 20% plus rapide que l'aller
-    public float cooldown = 0.5f; // Délai avant de libérer l'action après le retour
+    public float punchSpeed = 15f;      
+    public float returnMultiplier = 1.2f; 
+    public float cooldown = 0.5f; 
+    public float punchDistance = 1.8f;
 
     public bool isPunchingLeft { get; private set; }
     public bool isPunchingRight { get; private set; }
@@ -32,87 +32,73 @@ public class BoxerCombat : MonoBehaviour
     }
 
     public void HandleImpact(bool isLeft, bool wasBlocked, BoxerCombat opponent) {
-        // 1. ARRÊT IMMÉDIAT de la coroutine d'aller (PunchRoutine)
+        // Arrêt immédiat de l'aller
         if (isLeft) {
             if (_leftPunchCoroutine != null) StopCoroutine(_leftPunchCoroutine);
         } else {
             if (_rightPunchCoroutine != null) StopCoroutine(_rightPunchCoroutine);
         }
 
-        // 2. Lancement de la séquence d'impact
-        // On passe l'adversaire (qui est un BoxerCombat)
+        // Retour forcé suite à l'impact
         StartCoroutine(ImpactSequence(isLeft, wasBlocked, opponent));
     }
 
     IEnumerator PunchRoutine(Transform glove, Vector3 home, bool isLeft) {
-        Vector3 target = glove.localPosition + Vector3.forward * punchDistance; // Utilise ta variable punchDistance
+        Vector3 target = glove.localPosition + Vector3.forward * punchDistance;
 
-        // ALLER : Tant qu'on n'est pas arrivé à la cible
         while (Vector3.Distance(glove.localPosition, target) > 0.01f) {
             glove.localPosition = Vector3.MoveTowards(glove.localPosition, target, punchSpeed * Time.deltaTime);
             yield return null;
         }
 
-        // RETOUR automatique si on n'a rien touché
         yield return ReturnRoutine(glove, home, isLeft);
     }
 
     IEnumerator ReturnRoutine(Transform glove, Vector3 home, bool isLeft) {
         float speed = punchSpeed * returnMultiplier;
 
-        // RETOUR : Tant qu'on n'est pas revenu à la garde
         while (Vector3.Distance(glove.localPosition, CalculateTargetGuard(home, isLeft)) > 0.01f) {
             Vector3 targetGuard = CalculateTargetGuard(home, isLeft);
             glove.localPosition = Vector3.MoveTowards(glove.localPosition, targetGuard, speed * Time.deltaTime);
             yield return null;
         }
 
-        // Fin du coup : On libère l'action après un cooldown
         yield return new WaitForSeconds(cooldown);
         if (isLeft) isPunchingLeft = false; else isPunchingRight = false;
     }
 
-    // Calcul dynamique de la position de garde (inclut la visée)
     private Vector3 CalculateTargetGuard(Vector3 home, bool isLeft) 
     {
-        // On récupère l'input spécifique au bras
         Vector2 specificInput = isLeft ? _mvmt.aimInputLeft : _mvmt.aimInputRight;
-        
         return home + new Vector3(specificInput.x * _mvmt.aimRange.x, specificInput.y * _mvmt.aimRange.y, 0);
     }
 
     IEnumerator ImpactSequence(bool isLeft, bool wasBlocked, BoxerCombat opponent) {
         if (!wasBlocked && opponent != null) {
-            // Petit délai de pénétration pour le punch
-            yield return new WaitForSeconds(0.05f);
+            // On vérifie si l'adversaire est encore vivant avant de faire trembler son visuel
+            BoxerHealth opponentHealth = opponent.GetComponent<BoxerHealth>();
 
-            // On cherche le script Visuals de l'ADVERSAIRE
-            BoxerVisuals opponentVisuals = opponent.GetComponent<BoxerVisuals>();
-            if (opponentVisuals != null) {
-                Vector3 punchDir = (opponent.transform.position - transform.position).normalized;
-                opponentVisuals.GetHit(punchDir); // Déclenche le Wobble chez l'autre
+            if (opponentHealth != null && !opponentHealth.IsKO) {
+                yield return new WaitForSeconds(0.05f); // Petit délai de pénétration
+
+                BoxerVisuals opponentVisuals = opponent.GetComponent<BoxerVisuals>();
+                if (opponentVisuals != null && opponentVisuals.enabled) {
+                    Vector3 punchDir = (opponent.transform.position - transform.position).normalized;
+                    opponentVisuals.TriggerWobble(punchDir); // On appelle la nouvelle méthode
+                }
             }
         }
 
-        // 3. RETOUR IMMÉDIAT
+        // Le bras revient toujours à la base
         Transform glove = isLeft ? _mvmt.leftGlove : _mvmt.rightGlove;
         Vector3 home = isLeft ? _mvmt.GetLeftHomePos() : _mvmt.GetRightHomePos();
         yield return ReturnRoutine(glove, home, isLeft);
     }
 
-    // Ajoute cette variable si elle manquait
-    public float punchDistance = 1.8f;
-
     public void ResetCombatState()
     {
-        // On arrête les coups en cours
         StopAllCoroutines();
-        
-        // On force les booléens à faux
         isPunchingLeft = false;
         isPunchingRight = false;
-        
-        // Si tu as des paramètres d'animator à reset, fais-le ici aussi
-        // ex: _anim.Play("Idle");
     }
-}   
+}

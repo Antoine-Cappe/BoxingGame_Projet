@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
+using System.Collections;
 
 public class BoxerAgent : Agent
 {
@@ -21,6 +22,8 @@ public class BoxerAgent : Agent
     private BoxerHealth _oppHealth;
     private Rigidbody _oppRb;
 
+    private bool _isEndingEpisode = false;
+
     public override void Initialize()
     {
         _mvmt = GetComponent<BoxerMovement>();
@@ -39,6 +42,9 @@ public class BoxerAgent : Agent
 
     public override void OnEpisodeBegin()
     {
+        _isEndingEpisode = false;
+        StopAllCoroutines();
+
         // 1. Reset de l'IA
         ResetBoxer(gameObject, _health, _mvmt, _combat, _rb, mySpawn);
 
@@ -52,49 +58,56 @@ public class BoxerAgent : Agent
     private void ResetBoxer(GameObject obj, BoxerHealth h, BoxerMovement m, BoxerCombat c, Rigidbody r, Transform s)
     {
         h.ResetHealth();
-        m.enabled = true;
-        c.enabled = true;
-        m.StopAllCoroutines();
+        
+        // Utilise la nouvelle méthode de nettoyage ici !
+        m.ResetMovementState(); 
+        
         c.ResetCombatState();
         
+        m.enabled = true;
+        c.enabled = true;
+
         if (s != null) {
             obj.transform.localPosition = s.localPosition;
             obj.transform.localRotation = s.localRotation;
         }
 
         if (r != null) {
-            r.isKinematic = false;
-            r.linearVelocity = Vector3.zero;
-            r.angularVelocity = Vector3.zero;
+            if (!r.isKinematic) {
+                r.linearVelocity = Vector3.zero;
+                r.angularVelocity = Vector3.zero;
+            }
             r.isKinematic = true;
         }
     }
 
     public override void CollectObservations(VectorSensor sensor)
     {
+        // Space Size = 18
         // --- SOI-MÊME ---
-        sensor.AddObservation(_mvmt.leftGlove.localPosition);
-        sensor.AddObservation(_mvmt.rightGlove.localPosition);
-        sensor.AddObservation(_combat.isPunchingLeft ? 1f : 0f);
-        sensor.AddObservation(_combat.isPunchingRight ? 1f : 0f);
-        sensor.AddObservation(_mvmt.isDodging ? 1f : 0f); 
+        sensor.AddObservation(_mvmt.leftGlove.localPosition); // 3
+        sensor.AddObservation(_mvmt.rightGlove.localPosition); // 3
+        sensor.AddObservation(_combat.isPunchingLeft ? 1f : 0f); // 1
+        sensor.AddObservation(_combat.isPunchingRight ? 1f : 0f); // 1
+        sensor.AddObservation(_mvmt.isDodging ? 1f : 0f); // 1
 
         // --- ADVERSAIRE ---
-        sensor.AddObservation(_oppMvmt.leftGlove.localPosition);
-        sensor.AddObservation(_oppMvmt.rightGlove.localPosition);
-        sensor.AddObservation(_oppCombat.isPunchingLeft ? 1f : 0f);
-        sensor.AddObservation(_oppCombat.isPunchingRight ? 1f : 0f);
-        sensor.AddObservation(_oppMvmt.isDodging ? 1f : 0f);
-
+        sensor.AddObservation(_oppMvmt.leftGlove.localPosition); // 3
+        sensor.AddObservation(_oppMvmt.rightGlove.localPosition); // 3
+        sensor.AddObservation(_oppCombat.isPunchingLeft ? 1f : 0f); // 1
+        sensor.AddObservation(_oppCombat.isPunchingRight ? 1f : 0f); // 1
+        sensor.AddObservation(_oppMvmt.isDodging ? 1f : 0f); // 1
     }
 
     public override void OnActionReceived(ActionBuffers actions)
     {
+        if (_isEndingEpisode) return;
+
         // Actions continues : Visée
         _mvmt.aimInputLeft = new Vector2(actions.ContinuousActions[0], actions.ContinuousActions[1]);
         _mvmt.aimInputRight = new Vector2(actions.ContinuousActions[2], actions.ContinuousActions[3]);
 
-        // Actions discrètes : Punch et Esquive
+        // Actions discrètes
         int punch = actions.DiscreteActions[0];
         if (punch == 1) _combat.PunchLeft();
         if (punch == 2) _combat.PunchRight();
@@ -103,26 +116,35 @@ public class BoxerAgent : Agent
         if (dodge == 1) _mvmt.TriggerDodge(1f);
         if (dodge == 2) _mvmt.TriggerDodge(-1f);
 
-        // Pénalité de temps très légère
+        // Pénalité de temps
         AddReward(-0.0001f);
 
-        // VICTOIRE : Si le bot est KO
-        if (_oppHealth != null && _oppHealth.IsKO()) 
+        // VICTOIRE : Si le bot tombe KO
+        if (_oppHealth != null && _oppHealth.IsKO && !_isEndingEpisode) 
         {
-            AddReward(1.0f);
-            EndEpisode();
+            SetReward(1.0f);
+            StartCoroutine(WaitAndEndEpisode());
         }
     }
 
-    // Appelé par BoxerHealth si l'IA est KO
+    // Appelé par BoxerHealth si l'AGENT (IA) est mis KO
     public void AgentKO()
     {
-        AddReward(-1.0f);
+        if (_isEndingEpisode) return;
+        SetReward(-1.0f);
+        StartCoroutine(WaitAndEndEpisode());
+    }
+
+    private IEnumerator WaitAndEndEpisode()
+    {
+        _isEndingEpisode = true;
+        // On attend que la capsule physique finisse son vol
+        yield return new WaitForSeconds(1.5f);
         EndEpisode();
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
     {
-        // (Ton code Heuristic pour tester au clavier)
+        // (Remplir ici avec BoxerInputHandler si tu veux tester l'agent au clavier)
     }
 }

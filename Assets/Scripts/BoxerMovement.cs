@@ -107,4 +107,19 @@ public class BoxerMovement : MonoBehaviour
 
     public Vector3 GetLeftHomePos() => _leftHomePos;
     public Vector3 GetRightHomePos() => _rightHomePos;
+
+    public void ResetMovementState()
+    {
+        // 1. On arrête la coroutine d'esquive en cours
+        StopAllCoroutines();
+        
+        // 2. On remet les verrous à zéro
+        isDodging = false;
+        _canDodge = true;
+
+        // 3. On remet le pivot bien droit instantanément
+        if (pivot != null) {
+            pivot.localRotation = Quaternion.identity;
+        }
+    }
 }

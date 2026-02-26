@@ -2,22 +2,58 @@
     "Boxer": {
         "checkpoints": [
             {
-                "steps": 360448,
-                "file_path": "results\\Boxer_Bot_01\\Boxer\\Boxer-360448.onnx",
-                "reward": null,
-                "creation_time": 1772123517.7083056,
+                "steps": 3499967,
+                "file_path": "results\\Boxer_Bot_01\\Boxer\\Boxer-3499967.onnx",
+                "reward": 0.19270681101700354,
+                "creation_time": 1772144820.8062038,
                 "auxillary_file_paths": [
-                    "results\\Boxer_Bot_01\\Boxer\\Boxer-360448.pt"
+                    "results\\Boxer_Bot_01\\Boxer\\Boxer-3499967.pt"
+                ]
+            },
+            {
+                "steps": 3999948,
+                "file_path": "results\\Boxer_Bot_01\\Boxer\\Boxer-3999948.onnx",
+                "reward": 0.326520741218701,
+                "creation_time": 1772145081.4036837,
+                "auxillary_file_paths": [
+                    "results\\Boxer_Bot_01\\Boxer\\Boxer-3999948.pt"
+                ]
+            },
+            {
+                "steps": 4499994,
+                "file_path": "results\\Boxer_Bot_01\\Boxer\\Boxer-4499994.onnx",
+                "reward": 0.6026832550764084,
+                "creation_time": 1772145341.9960876,
+                "auxillary_file_paths": [
+                    "results\\Boxer_Bot_01\\Boxer\\Boxer-4499994.pt"
+                ]
+            },
+            {
+                "steps": 4999954,
+                "file_path": "results\\Boxer_Bot_01\\Boxer\\Boxer-4999954.onnx",
+                "reward": 0.4926593384125095,
+                "creation_time": 1772145602.521903,
+                "auxillary_file_paths": [
+                    "results\\Boxer_Bot_01\\Boxer\\Boxer-4999954.pt"
+                ]
+            },
+            {
+                "steps": 5000018,
+                "file_path": "results\\Boxer_Bot_01\\Boxer\\Boxer-5000018.onnx",
+                "reward": 0.4926593384125095,
+                "creation_time": 1772145602.6634445,
+                "auxillary_file_paths": [
+                    "results\\Boxer_Bot_01\\Boxer\\Boxer-5000018.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 360448,
+            "steps": 5000018,
             "file_path": "results\\Boxer_Bot_01\\Boxer.onnx",
-            "reward": null,
-            "creation_time": 1772123517.7083056,
+            "reward": 0.4926593384125095,
+            "creation_time": 1772145602.6634445,
             "auxillary_file_paths": [
-                "results\\Boxer_Bot_01\\Boxer\\Boxer-360448.pt"
+                "results\\Boxer_Bot_01\\Boxer\\Boxer-5000018.pt"
             ]
         }
     },

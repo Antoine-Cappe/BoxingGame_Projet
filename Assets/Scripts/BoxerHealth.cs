@@ -57,6 +57,8 @@ public class BoxerHealth : MonoBehaviour
         
         // On passe la direction à la routine de chute
         StartCoroutine(FallRoutine(_lastHitDirection));
+        // délai d'une seconde
+        
 
         BoxerAgent myAgent = GetComponent<BoxerAgent>();
         if (myAgent != null) {
@@ -95,18 +97,18 @@ public class BoxerHealth : MonoBehaviour
     }
 
     public void ResetHealth()
-{
-    _isKO = false;
-    _currentHits = 0;
-    
-    // RE-ACTIVER le collider !
-    if (_mainCollider != null) {
-        _mainCollider.enabled = true; 
+    {
+        _isKO = false;
+        _currentHits = 0;
+        
+        // RE-ACTIVER le collider !
+        if (_mainCollider != null) {
+            _mainCollider.enabled = true; 
+        }
+        
+        // Remettre le tag si tu l'as changé
+        gameObject.tag = "Player"; 
     }
-    
-    // Remettre le tag si tu l'as changé
-    gameObject.tag = "Player"; 
-}
     // Méthode utile pour ML-Agents ou UI
     public bool IsKO() => _isKO;
 }

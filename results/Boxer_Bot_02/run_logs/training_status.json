@@ -1,0 +1,65 @@
+{
+    "Boxer": {
+        "checkpoints": [
+            {
+                "steps": 3499978,
+                "file_path": "results\\Boxer_Bot_02\\Boxer\\Boxer-3499978.onnx",
+                "reward": 1.2123711539297988,
+                "creation_time": 1772157491.1014304,
+                "auxillary_file_paths": [
+                    "results\\Boxer_Bot_02\\Boxer\\Boxer-3499978.pt"
+                ]
+            },
+            {
+                "steps": 3999970,
+                "file_path": "results\\Boxer_Bot_02\\Boxer\\Boxer-3999970.onnx",
+                "reward": 1.0468750190455467,
+                "creation_time": 1772157800.7836914,
+                "auxillary_file_paths": [
+                    "results\\Boxer_Bot_02\\Boxer\\Boxer-3999970.pt"
+                ]
+            },
+            {
+                "steps": 4499994,
+                "file_path": "results\\Boxer_Bot_02\\Boxer\\Boxer-4499994.onnx",
+                "reward": 1.1569506910884326,
+                "creation_time": 1772158114.1003876,
+                "auxillary_file_paths": [
+                    "results\\Boxer_Bot_02\\Boxer\\Boxer-4499994.pt"
+                ]
+            },
+            {
+                "steps": 4999956,
+                "file_path": "results\\Boxer_Bot_02\\Boxer\\Boxer-4999956.onnx",
+                "reward": 1.146075102452939,
+                "creation_time": 1772158423.426979,
+                "auxillary_file_paths": [
+                    "results\\Boxer_Bot_02\\Boxer\\Boxer-4999956.pt"
+                ]
+            },
+            {
+                "steps": 5000020,
+                "file_path": "results\\Boxer_Bot_02\\Boxer\\Boxer-5000020.onnx",
+                "reward": 1.146075102452939,
+                "creation_time": 1772158423.6280954,
+                "auxillary_file_paths": [
+                    "results\\Boxer_Bot_02\\Boxer\\Boxer-5000020.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 5000020,
+            "file_path": "results\\Boxer_Bot_02\\Boxer.onnx",
+            "reward": 1.146075102452939,
+            "creation_time": 1772158423.6280954,
+            "auxillary_file_paths": [
+                "results\\Boxer_Bot_02\\Boxer\\Boxer-5000020.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.5.1+cu121"
+    }
+}

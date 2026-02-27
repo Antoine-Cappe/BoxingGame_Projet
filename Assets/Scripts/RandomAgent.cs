@@ -1,6 +1,5 @@
 using UnityEngine;
 
-
 public class RandomAgent : MonoBehaviour
 {
     public BoxerCombat _combat;
@@ -13,12 +12,14 @@ public class RandomAgent : MonoBehaviour
     {
         _actionTimer += Time.deltaTime;
 
+        // 1. MISE À JOUR DE LA VISÉE (Toutes les 0.5s)
         if (_actionTimer >= 0.5f && !_inputTriggered) 
         {
             TakeRandomInput();
-            _inputTriggered = true; // On verrouille
+            _inputTriggered = true; // On verrouille jusqu'à la fin du cycle d'une seconde
         }
 
+        // 2. DÉCISION D'ACTION (Toutes les 1s)
         if (_actionTimer >= 1f) 
         {
             _actionTimer = 0f;
@@ -36,20 +37,32 @@ public class RandomAgent : MonoBehaviour
 
     void TakeRandomAction()
     {
-        int punchAction = Random.Range(1, 3); // 0 = rien, 1 = gauche, 2 = droite
+        // 0 = rien, 1 = gauche, 2 = droite (Range int est exclusif pour le max)
+        int punchAction = Random.Range(0, 3); 
         if (punchAction == 1) _combat.PunchLeft();
         if (punchAction == 2) _combat.PunchRight();
     }
 
     void TakeRandomInput()
     {
-        _mvmt.aimInputLeft = new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.25f, 1f));
-        _mvmt.aimInputRight = new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.25f, 1f));
+        // On utilise maintenant des valeurs discrètes pour correspondre au nouveau système
+        // Chaque axe peut être : -1 (Gauche/Bas), 0 (Fixe), ou 1 (Droite/Haut)
+        _mvmt.aimInputLeft = new Vector2(GetRandomDiscrete(), GetRandomDiscrete());
+        _mvmt.aimInputRight = new Vector2(GetRandomDiscrete(), GetRandomDiscrete());
+    }
+
+    // Fonction utilitaire pour générer -1, 0 ou 1
+    float GetRandomDiscrete()
+    {
+        int r = Random.Range(0, 3); // Retourne 0, 1 ou 2
+        if (r == 1) return 1f;
+        if (r == 2) return -1f;
+        return 0f; // r == 0
     }
 
     void TakeRandomDodge()
     {
-        int dodgeAction = Random.Range(1, 3); // 0 = rien, 1 = gauche, 2 = droite
+        int dodgeAction = Random.Range(0, 3); 
         if (dodgeAction == 1) _mvmt.TriggerDodge(1f);
         if (dodgeAction == 2) _mvmt.TriggerDodge(-1f); 
     }

@@ -9,8 +9,13 @@ public class BoxerCombat : MonoBehaviour
     public float cooldown = 0.5f; 
     public float punchDistance = 1.8f;
 
+    // isPunching = Est-ce que le gant est projeté ? (Bloque le mouvement de garde)
     public bool isPunchingLeft { get; private set; }
     public bool isPunchingRight { get; private set; }
+
+    // _canPunch = Est-ce que le cooldown est fini ? (Autorise une nouvelle attaque)
+    private bool _canPunchLeft = true;
+    private bool _canPunchRight = true;
 
     private BoxerMovement _mvmt;
     private Coroutine _leftPunchCoroutine, _rightPunchCoroutine;
@@ -18,28 +23,29 @@ public class BoxerCombat : MonoBehaviour
     void Awake() => _mvmt = GetComponent<BoxerMovement>();
 
     public void PunchLeft() {
-        if (!isPunchingLeft && !isPunchingRight && !_mvmt.isDodging) {
+        // On vérifie si on PEUT frapper, pas si on est en mouvement
+        if (_canPunchLeft && !isPunchingRight && !_mvmt.isDodging) {
             isPunchingLeft = true;
+            _canPunchLeft = false; // Début du cooldown
             _leftPunchCoroutine = StartCoroutine(PunchRoutine(_mvmt.leftGlove, _mvmt.GetLeftHomePos(), true));
         }
     }
 
     public void PunchRight() {
-        if (!isPunchingLeft && !isPunchingRight && !_mvmt.isDodging) {
+        if (_canPunchRight && !isPunchingLeft && !_mvmt.isDodging) {
             isPunchingRight = true;
+            _canPunchRight = false; // Début du cooldown
             _rightPunchCoroutine = StartCoroutine(PunchRoutine(_mvmt.rightGlove, _mvmt.GetRightHomePos(), false));
         }
     }
 
     public void HandleImpact(bool isLeft, bool wasBlocked, BoxerCombat opponent) {
-        // Arrêt immédiat de l'aller
         if (isLeft) {
             if (_leftPunchCoroutine != null) StopCoroutine(_leftPunchCoroutine);
         } else {
             if (_rightPunchCoroutine != null) StopCoroutine(_rightPunchCoroutine);
         }
 
-        // Retour forcé suite à l'impact
         StartCoroutine(ImpactSequence(isLeft, wasBlocked, opponent));
     }
 
@@ -57,39 +63,43 @@ public class BoxerCombat : MonoBehaviour
     IEnumerator ReturnRoutine(Transform glove, Vector3 home, bool isLeft) {
         float speed = punchSpeed * returnMultiplier;
 
-        while (Vector3.Distance(glove.localPosition, CalculateTargetGuard(home, isLeft)) > 0.01f) {
-            Vector3 targetGuard = CalculateTargetGuard(home, isLeft);
+        // Retour vers la garde actuelle (dynamique)
+        while (true) {
+            Vector3 targetGuard = isLeft ? _mvmt.GetCurrentLeftGuard() : _mvmt.GetCurrentRightGuard();
+            float dist = Vector3.Distance(glove.localPosition, targetGuard);
+            
+            if (dist < 0.01f) break;
+
             glove.localPosition = Vector3.MoveTowards(glove.localPosition, targetGuard, speed * Time.deltaTime);
             yield return null;
         }
 
-        yield return new WaitForSeconds(cooldown);
+        // --- LIBÉRATION DU MOUVEMENT ---
+        // Le gant est revenu : on autorise BoxerMovement à bouger la garde
         if (isLeft) isPunchingLeft = false; else isPunchingRight = false;
-    }
 
-    private Vector3 CalculateTargetGuard(Vector3 home, bool isLeft) 
-    {
-        Vector2 specificInput = isLeft ? _mvmt.aimInputLeft : _mvmt.aimInputRight;
-        return home + new Vector3(specificInput.x * _mvmt.aimRange.x, specificInput.y * _mvmt.aimRange.y, 0);
+        // --- ATTENTE DU COOLDOWN ---
+        // Le mouvement est libre, mais on ne peut pas encore cliquer/ordonner un nouveau punch
+        yield return new WaitForSeconds(cooldown);
+        
+        if (isLeft) _canPunchLeft = true; else _canPunchRight = true;
     }
 
     IEnumerator ImpactSequence(bool isLeft, bool wasBlocked, BoxerCombat opponent) {
         if (!wasBlocked && opponent != null) {
-            // On vérifie si l'adversaire est encore vivant avant de faire trembler son visuel
             BoxerHealth opponentHealth = opponent.GetComponent<BoxerHealth>();
 
             if (opponentHealth != null && !opponentHealth.IsKO) {
-                yield return new WaitForSeconds(0.05f); // Petit délai de pénétration
+                yield return new WaitForSeconds(0.05f);
 
                 BoxerVisuals opponentVisuals = opponent.GetComponent<BoxerVisuals>();
                 if (opponentVisuals != null && opponentVisuals.enabled) {
                     Vector3 punchDir = (opponent.transform.position - transform.position).normalized;
-                    opponentVisuals.TriggerWobble(punchDir); // On appelle la nouvelle méthode
+                    opponentVisuals.TriggerWobble(punchDir);
                 }
             }
         }
 
-        // Le bras revient toujours à la base
         Transform glove = isLeft ? _mvmt.leftGlove : _mvmt.rightGlove;
         Vector3 home = isLeft ? _mvmt.GetLeftHomePos() : _mvmt.GetRightHomePos();
         yield return ReturnRoutine(glove, home, isLeft);
@@ -100,5 +110,7 @@ public class BoxerCombat : MonoBehaviour
         StopAllCoroutines();
         isPunchingLeft = false;
         isPunchingRight = false;
+        _canPunchLeft = true;
+        _canPunchRight = true;
     }
 }

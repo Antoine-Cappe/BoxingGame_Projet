@@ -10,7 +10,7 @@ public class BoxerMovement : MonoBehaviour
     [Header("Réglages Visée")]
     public Vector2 aimInput; 
     public Vector2 aimRange = new Vector2(0.6f, 0.4f);
-    public float aimSmoothSpeed = 10f;
+    public float stepSpeed = 0.02f;
 
     [Header("Réglages Esquive (Impulsion)")]
     public float dodgeAngle = 35f;
@@ -28,10 +28,15 @@ public class BoxerMovement : MonoBehaviour
     private BoxerCombat _combat;
     private BoxerVisuals _visuals;
 
+    private Vector3 _currentLeftGuard;
+    private Vector3 _currentRightGuard;
+
     void Awake()
     {
         _leftHomePos = leftGlove.localPosition;
         _rightHomePos = rightGlove.localPosition;
+        _currentLeftGuard = _leftHomePos;
+        _currentRightGuard = _rightHomePos;
         _combat = GetComponent<BoxerCombat>();
         _visuals = GetComponent<BoxerVisuals>();
     }
@@ -93,20 +98,42 @@ public class BoxerMovement : MonoBehaviour
     }
 
     private void HandleGuardMovement()
-    {
-        // Calcul du décalage pour le gant GAUCHE
-        Vector3 offsetLeft = new Vector3(aimInputLeft.x * aimRange.x, aimInputLeft.y * aimRange.y, 0);
-        if (!_combat.isPunchingLeft)
-            leftGlove.localPosition = Vector3.Lerp(leftGlove.localPosition, _leftHomePos + offsetLeft, Time.deltaTime * aimSmoothSpeed);
+{
+    // --- CALCUL DE LA GARDE GAUCHE (Toujours mis à jour) ---
+    if (aimInputLeft.x > 0.2f) _currentLeftGuard.x += stepSpeed;
+    else if (aimInputLeft.x < -0.2f) _currentLeftGuard.x -= stepSpeed;
 
-        // Calcul du décalage pour le gant DROIT
-        Vector3 offsetRight = new Vector3(aimInputRight.x * aimRange.x, aimInputRight.y * aimRange.y, 0);
-        if (!_combat.isPunchingRight)
-            rightGlove.localPosition = Vector3.Lerp(rightGlove.localPosition, _rightHomePos + offsetRight, Time.deltaTime * aimSmoothSpeed);
+    if (aimInputLeft.y > 0.2f) _currentLeftGuard.y += stepSpeed;
+    else if (aimInputLeft.y < -0.2f) _currentLeftGuard.y -= stepSpeed;
+
+    _currentLeftGuard.x = Mathf.Clamp(_currentLeftGuard.x, _leftHomePos.x - aimRange.x, _leftHomePos.x + aimRange.x);
+    _currentLeftGuard.y = Mathf.Clamp(_currentLeftGuard.y, _leftHomePos.y - aimRange.y, _leftHomePos.y + aimRange.y);
+
+    // On n'applique physiquement la position que si on ne punch pas
+    if (!_combat.isPunchingLeft) {
+        leftGlove.localPosition = _currentLeftGuard;
     }
+
+    // --- CALCUL DE LA GARDE DROITE (Toujours mis à jour) ---
+    if (aimInputRight.x > 0.2f) _currentRightGuard.x += stepSpeed;
+    else if (aimInputRight.x < -0.2f) _currentRightGuard.x -= stepSpeed;
+
+    if (aimInputRight.y > 0.2f) _currentRightGuard.y += stepSpeed;
+    else if (aimInputRight.y < -0.2f) _currentRightGuard.y -= stepSpeed;
+
+    _currentRightGuard.x = Mathf.Clamp(_currentRightGuard.x, _rightHomePos.x - aimRange.x, _rightHomePos.x + aimRange.x);
+    _currentRightGuard.y = Mathf.Clamp(_currentRightGuard.y, _rightHomePos.y - aimRange.y, _rightHomePos.y + aimRange.y);
+
+    if (!_combat.isPunchingRight) {
+        rightGlove.localPosition = _currentRightGuard;
+    }
+}
 
     public Vector3 GetLeftHomePos() => _leftHomePos;
     public Vector3 GetRightHomePos() => _rightHomePos;
+
+    public Vector3 GetCurrentLeftGuard() => _currentLeftGuard;
+    public Vector3 GetCurrentRightGuard() => _currentRightGuard;
 
     public void ResetMovementState()
     {

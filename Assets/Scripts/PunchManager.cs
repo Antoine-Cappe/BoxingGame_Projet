@@ -6,7 +6,7 @@ public class PunchManager : MonoBehaviour
     public AudioClip monFichierAudio;
     public float dureeUnCoup = 0.5f;
 
-    // Cette fonction peut maintenant être appelée par n'importe quel script
+   
     public void JouerSonImpact()
 
 

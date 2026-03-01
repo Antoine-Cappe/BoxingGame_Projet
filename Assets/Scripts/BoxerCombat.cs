@@ -86,6 +86,8 @@ public class BoxerCombat : MonoBehaviour
     }
 
     IEnumerator ImpactSequence(bool isLeft, bool wasBlocked, BoxerCombat opponent) {
+        PunchManager pm = GetComponent<PunchManager>();
+        if (pm != null) pm.JouerSonImpact();
         if (!wasBlocked && opponent != null) {
             BoxerHealth opponentHealth = opponent.GetComponent<BoxerHealth>();
 

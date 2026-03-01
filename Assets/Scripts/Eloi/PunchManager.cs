@@ -6,12 +6,7 @@ public class PunchManager : MonoBehaviour
     public AudioClip monFichierAudio;
     public float dureeUnCoup = 0.5f;
 
-
-   
-
     public void JouerSonImpact()
-
-
     {
         if (monFichierAudio == null || maSource == null) return;
 

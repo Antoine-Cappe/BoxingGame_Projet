@@ -6,21 +6,21 @@ public class PunchManager : MonoBehaviour
     public AudioClip monFichierAudio;
     public float dureeUnCoup = 0.5f;
 
-    // Cette fonction peut maintenant être appelée par n'importe quel script
+    // Cette fonction peut maintenant ï¿½tre appelï¿½e par n'importe quel script
     public void JouerSonImpact()
 
 
     {
         if (monFichierAudio == null || maSource == null) return;
 
-        float momentAuHasard = Random.Range(0f, monFichierAudio.length - dureeUnCoup);
+        float[] timeCode = new float[] { 0.3f, 1.1f, 1.8f, 2.5f, 3.2f, 3.7f };
+        float momentAuHasard = timeCode[Random.Range(0, timeCode.Length)];
 
         maSource.clip = monFichierAudio;
         maSource.time = momentAuHasard;
         maSource.Play();
 
         Invoke("CouperLeSon", dureeUnCoup);
-        Debug.Log("Impact sonore déclenché !");
     }
 
     void CouperLeSon()

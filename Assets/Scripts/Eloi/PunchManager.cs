@@ -6,11 +6,9 @@ public class PunchManager : MonoBehaviour
     public AudioClip monFichierAudio;
     public float dureeUnCoup = 0.5f;
 
-<<<<<<< HEAD:Assets/Scripts/PunchManager.cs
+
    
-=======
-    // Cette fonction peut maintenant �tre appel�e par n'importe quel script
->>>>>>> 5d2b68180fa959c27ad287078f333790b5918773:Assets/Scripts/Eloi/PunchManager.cs
+
     public void JouerSonImpact()
 
 

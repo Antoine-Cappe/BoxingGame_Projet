@@ -499,8 +499,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6670c3ca96bc35c4c964ae2bb6b89f19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PunchManager
-  maSource: {fileID: 0}
-  monFichierAudio: {fileID: 8300000, guid: c5213d106d7b13949aad2bbaa464ae97, type: 3}
+  maSource: {fileID: 2501941335275465270}
+  monFichierAudio: {fileID: 8300000, guid: b7f8021405f47a142b507b6650c093f6, type: 3}
   dureeUnCoup: 0.5
 --- !u!1 &4589303783991055957
 GameObject:

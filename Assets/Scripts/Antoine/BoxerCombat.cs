@@ -86,8 +86,6 @@ public class BoxerCombat : MonoBehaviour
     }
 
     IEnumerator ImpactSequence(bool isLeft, bool wasBlocked, BoxerCombat opponent) {
-        PunchManager pm = GetComponent<PunchManager>();
-        if (pm != null) pm.JouerSonImpact();
         if (!wasBlocked && opponent != null) {
             BoxerHealth opponentHealth = opponent.GetComponent<BoxerHealth>();
 
@@ -96,6 +94,8 @@ public class BoxerCombat : MonoBehaviour
 
                 BoxerVisuals opponentVisuals = opponent.GetComponent<BoxerVisuals>();
                 if (opponentVisuals != null && opponentVisuals.enabled) {
+                    PunchManager pm = GetComponent<PunchManager>();
+                    if (pm != null) pm.JouerSonImpact();
                     Vector3 punchDir = (opponent.transform.position - transform.position).normalized;
                     opponentVisuals.TriggerWobble(punchDir);
                 }

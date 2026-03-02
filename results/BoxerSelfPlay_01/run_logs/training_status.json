@@ -1,0 +1,48 @@
+{
+    "Boxer": {
+        "checkpoints": [
+            {
+                "steps": 499893,
+                "file_path": "results\\BoxerSelfPlay_01\\Boxer\\Boxer-499893.onnx",
+                "reward": 0.13344999589025974,
+                "creation_time": 1772475897.5830755,
+                "auxillary_file_paths": [
+                    "results\\BoxerSelfPlay_01\\Boxer\\Boxer-499893.pt"
+                ]
+            },
+            {
+                "steps": 999937,
+                "file_path": "results\\BoxerSelfPlay_01\\Boxer\\Boxer-999937.onnx",
+                "reward": -0.05928334161581006,
+                "creation_time": 1772476417.33683,
+                "auxillary_file_paths": [
+                    "results\\BoxerSelfPlay_01\\Boxer\\Boxer-999937.pt"
+                ]
+            },
+            {
+                "steps": 1029001,
+                "file_path": "results\\BoxerSelfPlay_01\\Boxer\\Boxer-1029001.onnx",
+                "reward": 0.37710001575760543,
+                "creation_time": 1772476445.4572136,
+                "auxillary_file_paths": [
+                    "results\\BoxerSelfPlay_01\\Boxer\\Boxer-1029001.pt"
+                ]
+            }
+        ],
+        "elo": 1200.0,
+        "final_checkpoint": {
+            "steps": 1029001,
+            "file_path": "results\\BoxerSelfPlay_01\\Boxer.onnx",
+            "reward": 0.37710001575760543,
+            "creation_time": 1772476445.4572136,
+            "auxillary_file_paths": [
+                "results\\BoxerSelfPlay_01\\Boxer\\Boxer-1029001.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.5.1+cu121"
+    }
+}

@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Opponent
   - Glove
+  - Hurtbox
   layers:
   - Default
   - TransparentFX

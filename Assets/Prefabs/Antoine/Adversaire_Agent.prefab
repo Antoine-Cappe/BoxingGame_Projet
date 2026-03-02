@@ -276,9 +276,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7247660232703713700}
+  - component: {fileID: 9205745517684438046}
   m_Layer: 0
   m_Name: Pivot
-  m_TagString: Untagged
+  m_TagString: Hurtbox
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -302,6 +303,29 @@ Transform:
   - {fileID: 6041612497085143340}
   m_Father: {fileID: 8981819406923762057}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &9205745517684438046
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5290987861361740881}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 3
+  m_Direction: 1
+  m_Center: {x: 0, y: 1.5, z: 0}
 --- !u!1 &6098450161711410845
 GameObject:
   m_ObjectHideFlags: 0
@@ -565,6 +589,9 @@ GameObject:
   - component: {fileID: 3475361815677770082}
   - component: {fileID: -8553685209564577784}
   - component: {fileID: -8019034593064136683}
+  - component: {fileID: 6762868511523455996}
+  - component: {fileID: 2932623612626663270}
+  - component: {fileID: 1675189491178124132}
   m_Layer: 0
   m_Name: Adversaire_Agent
   m_TagString: Opponent
@@ -613,7 +640,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 126
+  m_Constraints: 116
   m_CollisionDetection: 0
 --- !u!136 &1658114260694083466
 CapsuleCollider:
@@ -634,7 +661,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 1
   m_Height: 3
   m_Direction: 1
   m_Center: {x: 0, y: 0.5, z: 0}
@@ -653,15 +680,19 @@ MonoBehaviour:
   pivot: {fileID: 7247660232703713700}
   leftGlove: {fileID: 5456670218562548913}
   rightGlove: {fileID: 6041612497085143340}
-  aimInput: {x: 0, y: 0}
-  aimRange: {x: 0.3, y: 0.4}
-  stepSpeed: 0.01
+  guardHighY: 0.35
+  guardLowY: -0.35
+  guardLerpSpeed: 20
+  leftGuardState: 0
+  rightGuardState: 0
   dodgeAngle: 35
   dodgeSpeed: 10
   dodgeDuration: 0.3
   dodgeCooldown: 0
-  aimInputLeft: {x: 0, y: 0}
-  aimInputRight: {x: 0, y: 0}
+  moveSpeed: 4
+  rotationSpeed: 150
+  moveInput: {x: 0, y: 0}
+  rotateInput: 0
 --- !u!114 &4995236683166275611
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -717,7 +748,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6887388901094987528}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cbeea87894c1c4d499329738e861808c, type: 3}
   m_Name: 
@@ -732,7 +763,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6887388901094987528}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
@@ -829,7 +860,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6887388901094987528}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6670c3ca96bc35c4c964ae2bb6b89f19, type: 3}
   m_Name: 
@@ -837,3 +868,68 @@ MonoBehaviour:
   maSource: {fileID: -8553685209564577784}
   monFichierAudio: {fileID: 8300000, guid: b7f8021405f47a142b507b6650c093f6, type: 3}
   dureeUnCoup: 0.5
+--- !u!114 &6762868511523455996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6887388901094987528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d1c4e0b1822b495aa52bc52839ecb30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.Policies.BehaviorParameters
+  m_BrainParameters:
+    VectorObservationSize: 22
+    NumStackedVectorObservations: 1
+    m_ActionSpec:
+      m_NumContinuousActions: 0
+      BranchSizes: 030000000300000003000000030000000300000003000000
+    VectorActionSize: 030000000300000003000000030000000300000003000000
+    VectorActionDescriptions: []
+    VectorActionSpaceType: 0
+    hasUpgradedBrainParametersWithActionSpec: 1
+  m_Model: {fileID: 0}
+  m_InferenceDevice: 0
+  m_BehaviorType: 0
+  m_BehaviorName: Boxer
+  TeamId: 1
+  m_UseChildSensors: 1
+  m_UseChildActuators: 1
+  m_DeterministicInference: 0
+  m_ObservableAttributeHandling: 0
+--- !u!114 &2932623612626663270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6887388901094987528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52038f7ad624e8d45b841702cee61656, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BoxerAgent
+  agentParameters:
+    maxStep: 0
+  hasUpgradedFromAgentParameters: 1
+  MaxStep: 1500
+  opponent: {fileID: 0}
+  mySpawn: {fileID: 0}
+  opponentSpawn: {fileID: 0}
+--- !u!114 &1675189491178124132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6887388901094987528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.DecisionRequester
+  DecisionPeriod: 5
+  DecisionStep: 0
+  TakeActionsBetweenDecisions: 1

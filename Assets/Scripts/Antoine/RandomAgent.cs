@@ -19,8 +19,8 @@ public class RandomAgent : MonoBehaviour
 
             // 1. DÉCISION DE VISÉE (Mouvement continu des gants)
             // On lui donne 40% de chance de rester immobile (0), 30% d'aller à gauche, 30% à droite
-            _mvmt.aimInputLeft = new Vector2(GetWeightedDirection(), GetWeightedDirection());
-            _mvmt.aimInputRight = new Vector2(GetWeightedDirection(), GetWeightedDirection());
+            //_mvmt.aimInputLeft = new Vector2(GetWeightedDirection(), GetWeightedDirection());
+            //_mvmt.aimInputRight = new Vector2(GetWeightedDirection(), GetWeightedDirection());
 
             // 2. DÉCISION D'ACTION (Punch ou Esquive)
             float dice = Random.value;

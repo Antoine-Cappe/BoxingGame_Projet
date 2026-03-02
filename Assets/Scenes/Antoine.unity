@@ -398,7 +398,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 761328612683903408, guid: 6045e072824b91b40ab0661ac2a431d2, type: 3}
       propertyPath: stepSpeed
-      value: 0.01
+      value: 0.04
       objectReference: {fileID: 0}
     - target: {fileID: 1508021004154612358, guid: 6045e072824b91b40ab0661ac2a431d2, type: 3}
       propertyPath: m_Enabled
@@ -478,7 +478,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5682150673954634616, guid: 6045e072824b91b40ab0661ac2a431d2, type: 3}
       propertyPath: stepSpeed
-      value: 0.01
+      value: 0.04
       objectReference: {fileID: 0}
     - target: {fileID: 5682150673954634616, guid: 6045e072824b91b40ab0661ac2a431d2, type: 3}
       propertyPath: aimRange.x

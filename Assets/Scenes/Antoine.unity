@@ -119,11 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!82 &329583655 stripped
-AudioSource:
-  m_CorrespondingSourceObject: {fileID: 5914501945285168716, guid: 6045e072824b91b40ab0661ac2a431d2, type: 3}
-  m_PrefabInstance: {fileID: 1645379446}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &482122512
 GameObject:
   m_ObjectHideFlags: 0
@@ -416,6 +411,10 @@ PrefabInstance:
       propertyPath: knockbackForce
       value: 20
       objectReference: {fileID: 0}
+    - target: {fileID: 3758262239874425464, guid: 6045e072824b91b40ab0661ac2a431d2, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3919931828806448780, guid: 6045e072824b91b40ab0661ac2a431d2, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -423,6 +422,10 @@ PrefabInstance:
     - target: {fileID: 4345930669146488191, guid: 6045e072824b91b40ab0661ac2a431d2, type: 3}
       propertyPath: maxHits
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4701840678273259234, guid: 6045e072824b91b40ab0661ac2a431d2, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5202566778296390985, guid: 6045e072824b91b40ab0661ac2a431d2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -511,7 +514,7 @@ PrefabInstance:
     - target: {fileID: 8333187731045356128, guid: 6045e072824b91b40ab0661ac2a431d2, type: 3}
       propertyPath: maSource
       value: 
-      objectReference: {fileID: 329583655}
+      objectReference: {fileID: 0}
     - target: {fileID: 8978160472379179135, guid: 6045e072824b91b40ab0661ac2a431d2, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -520,7 +523,12 @@ PrefabInstance:
       propertyPath: DecisionPeriod
       value: 5
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 9137233527046066912, guid: 6045e072824b91b40ab0661ac2a431d2, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 1946910191015613772, guid: 6045e072824b91b40ab0661ac2a431d2, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

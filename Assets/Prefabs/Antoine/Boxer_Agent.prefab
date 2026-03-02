@@ -121,9 +121,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7559796856055786638}
+  - component: {fileID: 412769517847580736}
   m_Layer: 0
   m_Name: Pivot
-  m_TagString: Untagged
+  m_TagString: Hurtbox
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -147,6 +148,29 @@ Transform:
   - {fileID: 6132060569301164706}
   m_Father: {fileID: 7441529944678704162}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &412769517847580736
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3352283905839349906}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 3
+  m_Direction: 1
+  m_Center: {x: 0, y: 1.5, z: 0}
 --- !u!1 &3741021577558099081
 GameObject:
   m_ObjectHideFlags: 0
@@ -162,7 +186,6 @@ GameObject:
   - component: {fileID: 3336267053872079487}
   - component: {fileID: 1284981116672497541}
   - component: {fileID: 5540551961168976133}
-  - component: {fileID: 7757721719564103990}
   - component: {fileID: 4423200897074149208}
   - component: {fileID: 7224256834248838908}
   - component: {fileID: 879595198445577221}
@@ -315,18 +338,6 @@ MonoBehaviour:
   knockbackForce: 20
   liftForce: 5
   visualsRoot: {fileID: 3352283905839349906}
---- !u!114 &7757721719564103990
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3741021577558099081}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 250f87e9264613f41a7085dacab34b4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BoxerInputHandler
 --- !u!114 &4423200897074149208
 MonoBehaviour:
   m_ObjectHideFlags: 0

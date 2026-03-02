@@ -586,7 +586,6 @@ GameObject:
   - component: {fileID: 4995236683166275611}
   - component: {fileID: 6054420043005986295}
   - component: {fileID: 4631998889750123232}
-  - component: {fileID: 3475361815677770082}
   - component: {fileID: 6762868511523455996}
   - component: {fileID: 2932623612626663270}
   - component: {fileID: 1675189491178124132}
@@ -739,21 +738,6 @@ MonoBehaviour:
   knockbackForce: 20
   liftForce: 5
   visualsRoot: {fileID: 5290987861361740881}
---- !u!114 &3475361815677770082
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6887388901094987528}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cbeea87894c1c4d499329738e861808c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RandomAgent
-  _combat: {fileID: 4995236683166275611}
-  _mvmt: {fileID: 7161364262879760436}
-  decisionFrequency: 0.2
 --- !u!114 &6762868511523455996
 MonoBehaviour:
   m_ObjectHideFlags: 0

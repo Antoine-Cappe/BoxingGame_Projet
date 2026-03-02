@@ -29,6 +29,7 @@ public class BoxerVisuals : MonoBehaviour
 
         // Si un tremblement est déjà en cours, on l'arrête pour recommencer le nouveau
         if (_wobbleCoroutine != null) StopCoroutine(_wobbleCoroutine);
+        // Ajouter un son de choc ici 
         _wobbleCoroutine = StartCoroutine(WobbleRoutine(axis));
     }
 

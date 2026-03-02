@@ -21,7 +21,6 @@ public class BoxerAgent : Agent
     private BoxerHealth _oppHealth;
 
     private bool _isEndingEpisode = false;
-    private bool _victoryReached = false; // Pour savoir si l'épisode s'est fini par un KO
 
     public override void Initialize()
     {
@@ -40,25 +39,17 @@ public class BoxerAgent : Agent
     public override void OnEpisodeBegin()
     {
         // --- STATISTIQUE DE TIMEOUT ---
-        // Si l'épisode recommence sans que _isEndingEpisode n'ait été mis à true, 
-        // cela signifie que nous avons atteint le MaxStep (Timeout)
+        // Si l'épisode recommence sans que _isEndingEpisode soit vrai, c'est un Timeout (0)
         if (!_isEndingEpisode && _mvmt != null)
         {
             Academy.Instance.StatsRecorder.Add("Combat/KO_Rate", 0f);
         }
 
         _isEndingEpisode = false;
-        _victoryReached = false;
         StopAllCoroutines();
 
+        // RESET INDIVIDUEL : On ne réinitialise QUE soi-même
         ResetBoxer(gameObject, _health, _mvmt, _combat, _rb, mySpawn);
-
-        if (opponent != null)
-        {
-            BoxerCombat oppCombat = opponent.GetComponent<BoxerCombat>();
-            Rigidbody oppRb = opponent.GetComponent<Rigidbody>();
-            ResetBoxer(opponent, _oppHealth, _oppMvmt, oppCombat, oppRb, opponentSpawn);
-        }
     }
 
     private void ResetBoxer(GameObject obj, BoxerHealth h, BoxerMovement m, BoxerCombat c, Rigidbody r, Transform s)
@@ -71,7 +62,6 @@ public class BoxerAgent : Agent
         c.enabled = true;
 
         if (s != null) {
-            // Variation aléatoire du spawn pour éviter le sur-apprentissage
             Vector3 randomOffset = new Vector3(Random.Range(-0.5f, 0.5f), 0, Random.Range(-0.5f, 0.5f));
             obj.transform.localPosition = s.localPosition + randomOffset;
 
@@ -136,32 +126,23 @@ public class BoxerAgent : Agent
 
     private void CalculateRewards()
     {
-        if (opponent == null) return;
+        if (opponent == null || _isEndingEpisode) return;
 
-        // 1. RÉCOMPENSE DE DISTANCE (Entre 2.1 et 3.2m car radius de 1+1 = 2)
+        // 1. PÉNALITÉ DE TEMPS (Optionnelle) : Encourage à finir vite
+        // AddReward(-0.0001f); //
+
+        // 2. RÉCOMPENSE DE DISTANCE ET ORIENTATION
         float dist = Vector3.Distance(transform.position, opponent.transform.position);
-        if (dist >= 2.1f && dist <= 3.2f) 
-        {
-            AddReward(0.0002f); 
-        }
-        else if (dist > 6f) 
-        {
-            AddReward(-0.0005f);
-        }
-
-        // 2. RÉCOMPENSE D'ORIENTATION (Face à face)
+        if (dist >= 2.1f && dist <= 3.2f) AddReward(0.0002f); 
+        
         Vector3 dirToOpp = (opponent.transform.position - transform.position).normalized;
-        float lookAtDot = Vector3.Dot(transform.forward, dirToOpp);
-        if (lookAtDot > 0.95f) 
-        {
-            AddReward(0.0002f); 
-        }
+        if (Vector3.Dot(transform.forward, dirToOpp) > 0.95f) AddReward(0.0002f);
 
-        // 3. VICTOIRE (KO de l'adversaire)
-        if (_oppHealth != null && _oppHealth.IsKO && !_isEndingEpisode) 
+        // 3. VICTOIRE : Signal instantané sans délai
+        if (_oppHealth != null && _oppHealth.IsKO) 
         {
             AddReward(1.0f); 
-            StartCoroutine(WaitAndEndEpisode(true)); // Terminé par KO
+            DirectEndEpisode(true); 
         }
     }
 
@@ -176,18 +157,18 @@ public class BoxerAgent : Agent
     {
         if (_isEndingEpisode) return;
         AddReward(-1.0f); 
-        StartCoroutine(WaitAndEndEpisode(true)); // Terminé par KO
+        DirectEndEpisode(true); // Signal instantané sans délai
     }
 
-    private IEnumerator WaitAndEndEpisode(bool isKO)
+    // --- FIN D'ÉPISODE IMMÉDIATE ---
+    private void DirectEndEpisode(bool isKO)
     {
+        if (_isEndingEpisode) return;
         _isEndingEpisode = true;
-        _victoryReached = isKO;
 
-        // Envoi de la statistique à TensorBoard (1 = KO, 0 = Timeout)
+        // Envoi de la stat à TensorBoard
         Academy.Instance.StatsRecorder.Add("Combat/KO_Rate", isKO ? 1f : 0f);
-
-        yield return new WaitForSeconds(1.5f);
+        
         EndEpisode();
     }
 

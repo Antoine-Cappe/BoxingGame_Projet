@@ -2,8 +2,8 @@ behaviors:
   Boxer:
     trainer_type: ppo
     hyperparameters:
-      batch_size: 1024
-      buffer_size: 10240
+      batch_size: 4096
+      buffer_size: 40960
       learning_rate: 3.0e-4
       beta: 5.0e-3
       epsilon: 0.2
@@ -12,21 +12,23 @@ behaviors:
       learning_rate_schedule: linear
     network_settings:
       normalize: true
-      hidden_units: 256
+      hidden_units: 512
       num_layers: 3
       vis_encode_type: simple
     reward_signals:
       extrinsic:
         gamma: 0.99
         strength: 1.0
-    # Paramètres de Self-Play
+    
+    # --- SECTION SELF-PLAY OPTIMISÉE ---
     self_play:
       window: 10
       play_against_latest_model_ratio: 0.5
-      save_steps: 50000
-      swap_steps: 20000
-      team_change_steps: 0
-    max_steps: 5000000
-    time_horizon: 128
-    summary_freq: 20000
+      save_steps: 20000       # On augmente un peu pour laisser l'IA s'améliorer avant de créer un nouveau "professeur"
+      swap_steps: 10000       # On change d'adversaire moins frénétiquement pour stabiliser l'apprentissage
+      team_change: 0          # On laisse à 0 car ton script gère très bien le reset individuel
+      
     keep_checkpoints: 5
+    max_steps: 5000000
+    time_horizon: 128         # 128 permet à l'IA d'anticiper des séquences de coups plus longues
+    summary_freq: 10000

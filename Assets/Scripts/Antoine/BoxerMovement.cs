@@ -37,6 +37,7 @@ public class BoxerMovement : MonoBehaviour
     public float rotationSpeed = 150f;
     [HideInInspector] public Vector2 moveInput;
     [HideInInspector] public float rotateInput;
+    
 
     void Awake()
     {

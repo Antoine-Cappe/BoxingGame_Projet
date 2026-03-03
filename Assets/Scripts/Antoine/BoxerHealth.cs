@@ -34,7 +34,7 @@ public class BoxerHealth : MonoBehaviour
         // Récompense négative pour l'IA (instinct de survie)
         BoxerAgent agent = GetComponent<BoxerAgent>();
         if (agent != null) {
-            agent.AddReward(-0.3f); 
+            agent.AddReward(-0.1f); 
         }
 
         if (_currentHits >= maxHits) {

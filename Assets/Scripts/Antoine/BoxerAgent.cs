@@ -38,22 +38,17 @@ public class BoxerAgent : Agent
 
     public override void OnEpisodeBegin()
     {
-        // --- STATISTIQUE DE TIMEOUT ---
-        // Si l'épisode recommence sans que _isEndingEpisode soit vrai, c'est un Timeout (0)
-        if (!_isEndingEpisode && _mvmt != null)
-        {
-            Academy.Instance.StatsRecorder.Add("Combat/KO_Rate", 0f);
-        }
-
+        
         _isEndingEpisode = false;
         StopAllCoroutines();
 
-        // RESET INDIVIDUEL : On ne réinitialise QUE soi-même
+        // RESET INDIVIDUEL
         ResetBoxer(gameObject, _health, _mvmt, _combat, _rb, mySpawn);
     }
 
     private void ResetBoxer(GameObject obj, BoxerHealth h, BoxerMovement m, BoxerCombat c, Rigidbody r, Transform s)
     {
+        Debug.Log($"Resetting {obj.name}");
         h.ResetHealth();
         m.ResetMovementState(); 
         c.ResetCombatState();
@@ -78,28 +73,24 @@ public class BoxerAgent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        // --- TOTAL OBSERVATIONS : 22 ---
-        Vector3 dirToOpponent = (opponent.transform.position - transform.position);
-        sensor.AddObservation(dirToOpponent.normalized); // 3
-        sensor.AddObservation(dirToOpponent.magnitude); // 1
+        Vector3 dirToOpponent = opponent.transform.position - transform.position;
+        sensor.AddObservation(dirToOpponent.normalized); 
+        sensor.AddObservation(dirToOpponent.magnitude); 
         
-        sensor.AddObservation(Vector3.Dot(transform.forward, dirToOpponent.normalized)); // 1
-        sensor.AddObservation(Vector3.Dot(opponent.transform.forward, -dirToOpponent.normalized)); // 1
+        sensor.AddObservation(Vector3.Dot(transform.forward, dirToOpponent.normalized)); 
+        sensor.AddObservation(Vector3.Dot(opponent.transform.forward, -dirToOpponent.normalized)); 
 
-        sensor.AddObservation(_mvmt.leftGuardState / 2f); // 1
-        sensor.AddObservation(_mvmt.rightGuardState / 2f); // 1
-        sensor.AddObservation(_combat.isPunchingLeft ? 1f : 0f); // 1
-        sensor.AddObservation(_combat.isPunchingRight ? 1f : 0f); // 1
-        sensor.AddObservation(_mvmt.isDodging ? 1f : 0f); // 1
+        sensor.AddObservation(_mvmt.leftGuardState / 2f); 
+        sensor.AddObservation(_mvmt.rightGuardState / 2f); 
+        sensor.AddObservation(_combat.isPunchingLeft ? 1f : 0f); 
+        sensor.AddObservation(_combat.isPunchingRight ? 1f : 0f); 
+        sensor.AddObservation(_mvmt.isDodging ? 1f : 0f); 
 
-        sensor.AddObservation(_oppMvmt.leftGuardState / 2f); // 1
-        sensor.AddObservation(_oppMvmt.rightGuardState / 2f); // 1
-        sensor.AddObservation(opponent.GetComponent<BoxerCombat>().isPunchingLeft ? 1f : 0f); // 1
-        sensor.AddObservation(opponent.GetComponent<BoxerCombat>().isPunchingRight ? 1f : 0f); // 1
-        sensor.AddObservation(_oppMvmt.isDodging ? 1f : 0f); // 1
-        
-        sensor.AddObservation(_mvmt.leftGlove.localPosition); // 3
-        sensor.AddObservation(_mvmt.rightGlove.localPosition); // 3
+        sensor.AddObservation(_oppMvmt.leftGuardState / 2f); 
+        sensor.AddObservation(_oppMvmt.rightGuardState / 2f); 
+        sensor.AddObservation(opponent.GetComponent<BoxerCombat>().isPunchingLeft ? 1f : 0f); 
+        sensor.AddObservation(opponent.GetComponent<BoxerCombat>().isPunchingRight ? 1f : 0f); 
+        sensor.AddObservation(_oppMvmt.isDodging ? 1f : 0f); 
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -128,17 +119,23 @@ public class BoxerAgent : Agent
     {
         if (opponent == null || _isEndingEpisode) return;
 
-        // 1. PÉNALITÉ DE TEMPS (Optionnelle) : Encourage à finir vite
-        // AddReward(-0.0001f); //
-
-        // 2. RÉCOMPENSE DE DISTANCE ET ORIENTATION
+        // TES REWARDS D'ORIGINE
         float dist = Vector3.Distance(transform.position, opponent.transform.position);
-        if (dist >= 2.1f && dist <= 3.2f) AddReward(0.0002f); 
+        if (dist >= 2.1f && dist <= 3.2f) 
+        {
+            AddReward(0.0002f); 
+        }
+        else if (dist > 6f) 
+        {
+            AddReward(-0.0005f);
+        }
         
         Vector3 dirToOpp = (opponent.transform.position - transform.position).normalized;
-        if (Vector3.Dot(transform.forward, dirToOpp) > 0.95f) AddReward(0.0002f);
+        if (Vector3.Dot(transform.forward, dirToOpp) > 0.95f) 
+        {
+            AddReward(0.0002f); 
+        }
 
-        // 3. VICTOIRE : Signal instantané sans délai
         if (_oppHealth != null && _oppHealth.IsKO) 
         {
             AddReward(1.0f); 
@@ -157,18 +154,21 @@ public class BoxerAgent : Agent
     {
         if (_isEndingEpisode) return;
         AddReward(-1.0f); 
-        DirectEndEpisode(true); // Signal instantané sans délai
+        DirectEndEpisode(true); 
     }
 
-    // --- FIN D'ÉPISODE IMMÉDIATE ---
     private void DirectEndEpisode(bool isKO)
     {
         if (_isEndingEpisode) return;
         _isEndingEpisode = true;
 
-        // Envoi de la stat à TensorBoard
+        // --- DEBUG VICTOIRE ---
+        if (isKO)
+        {
+            Debug.Log($"<color=green>[KO] {gameObject.name} gagne à Step {StepCount}</color>");
+        }
+
         Academy.Instance.StatsRecorder.Add("Combat/KO_Rate", isKO ? 1f : 0f);
-        
         EndEpisode();
     }
 

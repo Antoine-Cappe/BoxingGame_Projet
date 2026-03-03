@@ -305,7 +305,7 @@ MonoBehaviour:
   punchSpeed: 10
   returnMultiplier: 1
   cooldown: 0.5
-  punchDistance: 1.8
+  punchDistance: 2
 --- !u!114 &1284981116672497541
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -351,7 +351,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.Policies.BehaviorParameters
   m_BrainParameters:
-    VectorObservationSize: 22
+    VectorObservationSize: 16
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0
@@ -384,7 +384,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 1500
+  MaxStep: 5000
   opponent: {fileID: 6887388901094987528, guid: 2808f871ffd336644a1cf14b752453f8, type: 3}
   mySpawn: {fileID: 0}
   opponentSpawn: {fileID: 0}

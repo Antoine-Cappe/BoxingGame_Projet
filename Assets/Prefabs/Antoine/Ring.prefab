@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 3496671389128668716}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: -3, y: 1.3, z: 3}
+  m_LocalPosition: {x: -2, y: 1.3, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -92,7 +92,7 @@ Transform:
   m_GameObject: {fileID: 8829964653475208952}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3, y: 1.3, z: -3}
+  m_LocalPosition: {x: 2, y: 1.3, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -140,7 +140,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8981819406923762057, guid: 2808f871ffd336644a1cf14b752453f8, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3
+      value: -2
       objectReference: {fileID: 0}
     - target: {fileID: 8981819406923762057, guid: 2808f871ffd336644a1cf14b752453f8, type: 3}
       propertyPath: m_LocalPosition.y
@@ -148,7 +148,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8981819406923762057, guid: 2808f871ffd336644a1cf14b752453f8, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8981819406923762057, guid: 2808f871ffd336644a1cf14b752453f8, type: 3}
       propertyPath: m_LocalRotation.w
@@ -227,7 +227,7 @@ PrefabInstance:
       objectReference: {fileID: 5558964465142450234}
     - target: {fileID: 7441529944678704162, guid: 2a244aaa49edd8f4c9577c1ba08832e1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7441529944678704162, guid: 2a244aaa49edd8f4c9577c1ba08832e1, type: 3}
       propertyPath: m_LocalPosition.y
@@ -235,7 +235,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7441529944678704162, guid: 2a244aaa49edd8f4c9577c1ba08832e1, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3
+      value: -2
       objectReference: {fileID: 0}
     - target: {fileID: 7441529944678704162, guid: 2a244aaa49edd8f4c9577c1ba08832e1, type: 3}
       propertyPath: m_LocalRotation.w

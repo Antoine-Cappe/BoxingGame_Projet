@@ -185,7 +185,7 @@ public class BoxerAgent : Agent
 
     IEnumerator EndEpisodeAfterDelay()
     {
-        yield return new WaitForSecondsRealtime(4f);
+        yield return new WaitForSecondsRealtime(3f);
         EndEpisode();
     }
 

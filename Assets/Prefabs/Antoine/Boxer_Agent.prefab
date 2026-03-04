@@ -68,6 +68,8 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: e05d7ccec26f2aa4789e3d85075d7e5e, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -190,7 +192,7 @@ GameObject:
   - component: {fileID: 7224256834248838908}
   - component: {fileID: 879595198445577221}
   - component: {fileID: 8140650222509552635}
-  - component: {fileID: 6615418605959637334}
+  - component: {fileID: 8488146309500697525}
   m_Layer: 0
   m_Name: Boxer_Agent
   m_TagString: Player
@@ -335,7 +337,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48877839c13bcf14781b1a794ccd13b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoxerHealth
-  maxHits: 3
+  maxHits: 5
   ragdollPrefab: {fileID: 3741021577558099081, guid: 37552b30789c82e4db70166552caa54a, type: 3}
   knockbackForce: 20
   liftForce: 5
@@ -502,7 +504,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &6615418605959637334
+--- !u!114 &8488146309500697525
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -515,7 +517,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PunchManager
   maSource: {fileID: 8140650222509552635}
-  monFichierAudio: {fileID: 8300000, guid: b7f8021405f47a142b507b6650c093f6, type: 3}
+  monFichierAudio1: {fileID: 8300000, guid: b7f8021405f47a142b507b6650c093f6, type: 3}
+  monFichierAudio2: {fileID: 8300000, guid: 0b2237f4c15a84745a2450a86e10676a, type: 3}
   dureeUnCoup: 0.5
 --- !u!1 &4589303783991055957
 GameObject:

@@ -95,7 +95,7 @@ public class BoxerCombat : MonoBehaviour
                 BoxerVisuals opponentVisuals = opponent.GetComponent<BoxerVisuals>();
                 if (opponentVisuals != null && opponentVisuals.enabled) {
                     PunchManager pm = GetComponent<PunchManager>();
-                    if (pm != null) pm.JouerSonImpact();
+                    if (pm != null) pm.JouerSonImpact(1);
                     Vector3 punchDir = (opponent.transform.position - transform.position).normalized;
                     opponentVisuals.TriggerWobble(punchDir);
                 }

@@ -52,6 +52,9 @@ public class BoxerHealth : MonoBehaviour
         if (_isKO) return;
         _isKO = true;
 
+        PunchManager pm = GetComponent<PunchManager>();
+        if (pm != null) pm.JouerSonImpact(2);
+
         // 1. Désactivation de la logique et du visuel
         if (_mainCollider != null) _mainCollider.enabled = false;
         if (visualsRoot != null) visualsRoot.SetActive(false);

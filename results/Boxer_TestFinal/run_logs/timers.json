@@ -1,0 +1,47 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1772586807",
+        "python_version": "3.10.12 | packaged by Anaconda, Inc. | (main, Jul  5 2023, 19:01:18) [MSC v.1916 64 bit (AMD64)]",
+        "command_line_arguments": "C:\\Users\\AkZer\\anaconda3\\envs\\mlagents\\Scripts\\mlagents-learn config.yaml --run-id=Boxer_TestFinal --force",
+        "mlagents_version": "1.1.0",
+        "mlagents_envs_version": "1.1.0",
+        "communication_protocol_version": "1.5.0",
+        "pytorch_version": "2.5.1+cu121",
+        "numpy_version": "1.23.5",
+        "end_time_seconds": "1772586824"
+    },
+    "total": 17.850000600003114,
+    "count": 1,
+    "self": 0.00837370000226656,
+    "children": {
+        "run_training.setup": {
+            "total": 0.08243100000254344,
+            "count": 1,
+            "self": 0.08243100000254344
+        },
+        "TrainerController.start_learning": {
+            "total": 17.759195899998304,
+            "count": 1,
+            "self": 0.00031989999843062833,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 17.75885980000021,
+                    "count": 1,
+                    "self": 17.75885980000021
+                },
+                "trainer_threads": {
+                    "total": 8.999995770864189e-07,
+                    "count": 1,
+                    "self": 8.999995770864189e-07
+                },
+                "TrainerController._save_models": {
+                    "total": 1.5300000086426735e-05,
+                    "count": 1,
+                    "self": 1.5300000086426735e-05
+                }
+            }
+        }
+    }
+}

@@ -117,7 +117,7 @@ public class BoxerAgent : Agent
 
         _mvmt.moveInput.y = ConvertToDirect(discrete[3]);
         _mvmt.moveInput.x = ConvertToDirect(discrete[4]);
-        _mvmt.rotateInput = ConvertToDirect(discrete[5]);
+        //_mvmt.rotateInput = ConvertToDirect(discrete[5]);
 
         CalculateRewards();
     }
@@ -141,13 +141,6 @@ public class BoxerAgent : Agent
         float maxConsiderDist = 6f;
         float closeness = Mathf.Clamp01((maxConsiderDist - dist) / maxConsiderDist);
         AddReward(closeness * 0.0005f);
-
-        // Keep small forward-facing bonus
-        Vector3 dirToOpp = (opponent.transform.position - transform.position).normalized;
-        if (Vector3.Dot(transform.forward, dirToOpp) > 0.95f)
-        {
-            AddReward(0.0002f);
-        }
 
         _previousDistance = dist;
     }
@@ -192,7 +185,7 @@ public class BoxerAgent : Agent
 
     IEnumerator EndEpisodeAfterDelay()
     {
-        yield return new WaitForSecondsRealtime(2f);
+        yield return new WaitForSecondsRealtime(4f);
         EndEpisode();
     }
 

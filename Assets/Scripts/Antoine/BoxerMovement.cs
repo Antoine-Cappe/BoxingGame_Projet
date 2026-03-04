@@ -125,9 +125,13 @@ public class BoxerMovement : MonoBehaviour
 
     private void HandleMovement()
     {
-        if (Mathf.Abs(rotateInput) > 0.1f) {
-            float rotation = rotateInput * rotationSpeed * Time.fixedDeltaTime;
-            _rb.MoveRotation(_rb.rotation * Quaternion.Euler(0f, rotation, 0f));
+        if (_agentBoxer != null && _agentBoxer.opponent != null) {
+            Vector3 dir = (_agentBoxer.opponent.transform.position - transform.position);
+            dir.y = 0; // On reste bien droit
+            if (dir.sqrMagnitude > 0.001f) {
+                Quaternion targetRot = Quaternion.LookRotation(dir);
+                _rb.MoveRotation(Quaternion.Slerp(_rb.rotation, targetRot, Time.fixedDeltaTime * 20f));
+            }
         }
         if (moveInput.magnitude > 0.1f) {
             Vector3 moveDir = (transform.forward * moveInput.y + transform.right * moveInput.x).normalized;

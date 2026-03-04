@@ -1,0 +1,30 @@
+{
+    "Boxer": {
+        "elo": 1201.4914392830221,
+        "checkpoints": [
+            {
+                "steps": 1235,
+                "file_path": "results\\Boxer_TestUltimeFinal\\Boxer\\Boxer-1235.onnx",
+                "reward": 0.7924807770894124,
+                "creation_time": 1772588071.1717951,
+                "auxillary_file_paths": [
+                    "results\\Boxer_TestUltimeFinal\\Boxer\\Boxer-1235.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 1235,
+            "file_path": "results\\Boxer_TestUltimeFinal\\Boxer.onnx",
+            "reward": 0.7924807770894124,
+            "creation_time": 1772588071.1717951,
+            "auxillary_file_paths": [
+                "results\\Boxer_TestUltimeFinal\\Boxer\\Boxer-1235.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.5.1+cu121"
+    }
+}

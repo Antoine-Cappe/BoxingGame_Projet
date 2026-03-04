@@ -43,7 +43,7 @@ public class PunchDetector : MonoBehaviour
             // --- RÉCOMPENSE ---
             // On donne une récompense à l'IA pour avoir touché la zone précise de la Hurtbox
             BoxerAgent myAgent = owner.GetComponent<BoxerAgent>();
-            if (myAgent != null) myAgent.AddReward(0.3f); 
+            if (myAgent != null) myAgent.AddReward(0.2f); 
 
             // --- DÉGÂTS ---
             Vector3 hitDir = (other.transform.position - transform.position).normalized;

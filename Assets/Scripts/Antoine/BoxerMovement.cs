@@ -37,6 +37,7 @@ public class BoxerMovement : MonoBehaviour
     public float rotationSpeed = 150f;
     [HideInInspector] public Vector2 moveInput;
     [HideInInspector] public float rotateInput;
+    private BoxerAgent _agentBoxer;
     
 
     void Awake()
@@ -50,12 +51,14 @@ public class BoxerMovement : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         _rb.isKinematic = false;
         _rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        _agentBoxer = GetComponent<BoxerAgent>();
     }
 
     void FixedUpdate()
     {
         HandleGuardMovement();
         HandleMovement();
+        //Debug.Log(_agentBoxer.StepCount);
     }
 
     private void HandleGuardMovement()

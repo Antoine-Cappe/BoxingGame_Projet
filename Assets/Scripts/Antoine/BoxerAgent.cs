@@ -21,6 +21,8 @@ public class BoxerAgent : Agent
     private BoxerHealth _oppHealth;
 
     private bool _isEndingEpisode = false;
+    private Coroutine _endEpisodeCoroutine;
+    private float _previousDistance = -1f;
 
     public override void Initialize()
     {
@@ -44,11 +46,16 @@ public class BoxerAgent : Agent
 
         // RESET INDIVIDUEL
         ResetBoxer(gameObject, _health, _mvmt, _combat, _rb, mySpawn);
+
+        // Initialize previous distance for dense shaping
+        if (opponent != null)
+        {
+            _previousDistance = Vector3.Distance(transform.position, opponent.transform.position);
+        }
     }
 
     private void ResetBoxer(GameObject obj, BoxerHealth h, BoxerMovement m, BoxerCombat c, Rigidbody r, Transform s)
     {
-        Debug.Log($"Resetting {obj.name}");
         h.ResetHealth();
         m.ResetMovementState(); 
         c.ResetCombatState();
@@ -84,13 +91,13 @@ public class BoxerAgent : Agent
         sensor.AddObservation(_mvmt.rightGuardState / 2f); 
         sensor.AddObservation(_combat.isPunchingLeft ? 1f : 0f); 
         sensor.AddObservation(_combat.isPunchingRight ? 1f : 0f); 
-        sensor.AddObservation(_mvmt.isDodging ? 1f : 0f); 
+        //sensor.AddObservation(_mvmt.isDodging ? 1f : 0f); 
 
         sensor.AddObservation(_oppMvmt.leftGuardState / 2f); 
         sensor.AddObservation(_oppMvmt.rightGuardState / 2f); 
         sensor.AddObservation(opponent.GetComponent<BoxerCombat>().isPunchingLeft ? 1f : 0f); 
         sensor.AddObservation(opponent.GetComponent<BoxerCombat>().isPunchingRight ? 1f : 0f); 
-        sensor.AddObservation(_oppMvmt.isDodging ? 1f : 0f); 
+        //sensor.AddObservation(_oppMvmt.isDodging ? 1f : 0f); 
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -102,15 +109,15 @@ public class BoxerAgent : Agent
         if (discrete[0] == 1) _combat.PunchLeft();
         if (discrete[0] == 2) _combat.PunchRight();
 
-        if (discrete[1] == 1) _mvmt.TriggerDodge(1f);
-        if (discrete[1] == 2) _mvmt.TriggerDodge(-1f);
+        //if (discrete[1] == 1) _mvmt.TriggerDodge(1f);
+        //if (discrete[1] == 2) _mvmt.TriggerDodge(-1f);
 
-        _mvmt.leftGuardState = discrete[2];
-        _mvmt.rightGuardState = discrete[3];
+        _mvmt.leftGuardState = discrete[1];
+        _mvmt.rightGuardState = discrete[2];
 
-        _mvmt.moveInput.y = ConvertToDirect(discrete[4]);
-        _mvmt.moveInput.x = ConvertToDirect(discrete[5]);
-        _mvmt.rotateInput = ConvertToDirect(discrete[6]);
+        _mvmt.moveInput.y = ConvertToDirect(discrete[3]);
+        _mvmt.moveInput.x = ConvertToDirect(discrete[4]);
+        _mvmt.rotateInput = ConvertToDirect(discrete[5]);
 
         CalculateRewards();
     }
@@ -119,28 +126,30 @@ public class BoxerAgent : Agent
     {
         if (opponent == null || _isEndingEpisode) return;
 
-        // TES REWARDS D'ORIGINE
+        // Dense reward to encourage closing the distance:
+        // 1) small reward proportional to how much the agent reduced distance since last step
+        // 2) small shaping reward for being close
         float dist = Vector3.Distance(transform.position, opponent.transform.position);
-        if (dist >= 2.1f && dist <= 3.2f) 
-        {
-            AddReward(0.0002f); 
-        }
-        else if (dist > 6f) 
-        {
-            AddReward(-0.0005f);
-        }
-        
+
+        if (_previousDistance < 0f) _previousDistance = dist;
+
+        float delta = _previousDistance - dist; // positive when getting closer
+        // Reward closing: scale to keep per-step reward small but meaningful
+        AddReward(Mathf.Clamp(delta * 0.05f, -0.001f, 0.01f));
+
+        // Bonus for proximity (closer -> larger bonus), normalized by a max distance
+        float maxConsiderDist = 6f;
+        float closeness = Mathf.Clamp01((maxConsiderDist - dist) / maxConsiderDist);
+        AddReward(closeness * 0.0005f);
+
+        // Keep small forward-facing bonus
         Vector3 dirToOpp = (opponent.transform.position - transform.position).normalized;
-        if (Vector3.Dot(transform.forward, dirToOpp) > 0.95f) 
+        if (Vector3.Dot(transform.forward, dirToOpp) > 0.95f)
         {
-            AddReward(0.0002f); 
+            AddReward(0.0002f);
         }
 
-        if (_oppHealth != null && _oppHealth.IsKO) 
-        {
-            AddReward(1.0f); 
-            DirectEndEpisode(true); 
-        }
+        _previousDistance = dist;
     }
 
     private float ConvertToDirect(int val)
@@ -153,22 +162,37 @@ public class BoxerAgent : Agent
     public void AgentKO()
     {
         if (_isEndingEpisode) return;
-        AddReward(-1.0f); 
-        DirectEndEpisode(true); 
+
+        // 1. Punition du perdant
+        AddReward(-1.0f);
+
+        // 2. Récompense du vainqueur
+        BoxerAgent winner = opponent.GetComponent<BoxerAgent>();
+        if (winner != null && !winner._isEndingEpisode)
+        {
+            //Debug.Log($"KO ! +1 pour {opponent.name} / -1 pour {gameObject.name}");
+            winner.AddReward(1.0f);
+            
+            // FORCER LE VAINQUEUR À FINIR TOUT DE SUITE AUSSI
+            winner.DirectEndEpisode(true);
+        }
+
+        DirectEndEpisode(true);
     }
 
     private void DirectEndEpisode(bool isKO)
     {
         if (_isEndingEpisode) return;
         _isEndingEpisode = true;
+        
+        if (_endEpisodeCoroutine != null) StopCoroutine(_endEpisodeCoroutine);
+        _endEpisodeCoroutine = StartCoroutine(EndEpisodeAfterDelay());
+        //EndEpisode();
+    }
 
-        // --- DEBUG VICTOIRE ---
-        if (isKO)
-        {
-            Debug.Log($"<color=green>[KO] {gameObject.name} gagne à Step {StepCount}</color>");
-        }
-
-        Academy.Instance.StatsRecorder.Add("Combat/KO_Rate", isKO ? 1f : 0f);
+    IEnumerator EndEpisodeAfterDelay()
+    {
+        yield return new WaitForSecondsRealtime(2f);
         EndEpisode();
     }
 

@@ -1,0 +1,66 @@
+{
+    "Boxer": {
+        "checkpoints": [
+            {
+                "steps": 1499899,
+                "file_path": "results\\Boxer_SelfPlay2\\Boxer\\Boxer-1499899.onnx",
+                "reward": -1.2729333241780598,
+                "creation_time": 1772562328.4575222,
+                "auxillary_file_paths": [
+                    "results\\Boxer_SelfPlay2\\Boxer\\Boxer-1499899.pt"
+                ]
+            },
+            {
+                "steps": 1999998,
+                "file_path": "results\\Boxer_SelfPlay2\\Boxer\\Boxer-1999998.onnx",
+                "reward": null,
+                "creation_time": 1772564191.8575842,
+                "auxillary_file_paths": [
+                    "results\\Boxer_SelfPlay2\\Boxer\\Boxer-1999998.pt"
+                ]
+            },
+            {
+                "steps": 2499816,
+                "file_path": "results\\Boxer_SelfPlay2\\Boxer\\Boxer-2499816.onnx",
+                "reward": 0.1289086989734484,
+                "creation_time": 1772566128.7722082,
+                "auxillary_file_paths": [
+                    "results\\Boxer_SelfPlay2\\Boxer\\Boxer-2499816.pt"
+                ]
+            },
+            {
+                "steps": 2999927,
+                "file_path": "results\\Boxer_SelfPlay2\\Boxer\\Boxer-2999927.onnx",
+                "reward": -1.237099975347519,
+                "creation_time": 1772568509.7463799,
+                "auxillary_file_paths": [
+                    "results\\Boxer_SelfPlay2\\Boxer\\Boxer-2999927.pt"
+                ]
+            },
+            {
+                "steps": 3080767,
+                "file_path": "results\\Boxer_SelfPlay2\\Boxer\\Boxer-3080767.onnx",
+                "reward": null,
+                "creation_time": 1772569046.3648255,
+                "auxillary_file_paths": [
+                    "results\\Boxer_SelfPlay2\\Boxer\\Boxer-3080767.pt"
+                ]
+            }
+        ],
+        "elo": 650.6663053626744,
+        "final_checkpoint": {
+            "steps": 3080767,
+            "file_path": "results\\Boxer_SelfPlay2\\Boxer.onnx",
+            "reward": null,
+            "creation_time": 1772569046.3648255,
+            "auxillary_file_paths": [
+                "results\\Boxer_SelfPlay2\\Boxer\\Boxer-3080767.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.5.1+cu121"
+    }
+}

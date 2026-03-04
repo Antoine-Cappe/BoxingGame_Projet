@@ -2,8 +2,8 @@ behaviors:
   Boxer:
     trainer_type: ppo
     hyperparameters:
-      batch_size: 2048
-      buffer_size: 8192
+      batch_size: 4096
+      buffer_size: 40960
       learning_rate: 3.0e-4
       beta: 5.0e-3
       epsilon: 0.2
@@ -27,5 +27,5 @@ behaviors:
       team_change: 0
     keep_checkpoints: 5
     max_steps: 5000000
-    time_horizon: 1000           # 👈 CHANGÉ
+    time_horizon: 128       # 👈 CHANGÉ
     summary_freq: 10000
